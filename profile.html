@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>TrendAI - Profile</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     * {
       margin: 0;
@@ -106,6 +107,25 @@
       background-color: #00bfa6;
     }
 
+    /* Icon animations */
+    .icon-animate {
+      transition: all 0.3s ease;
+    }
+
+    .icon-animate:hover {
+      transform: scale(1.2);
+      color: #00ffcc;
+    }
+
+    .close-btn i {
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover i {
+      transform: scale(1.2);
+      color: #fff;
+    }
+
     input[type="text"],
     textarea {
       width: 100%;
@@ -164,13 +184,13 @@
   <div class="overlay" id="overlay"></div>
 
   <div class="profile-popup" id="popup">
-    <div class="close-btn" onclick="closeProfile()">✖️</div>
+    <div class="close-btn" onclick="closeProfile()"><i class="fas fa-times icon-animate"></i></div>
 
     <div class="profile-picture-container">
       <div class="profile-picture-wrapper">
         <img id="profileImage" src="https://via.placeholder.com/120" alt="Profile Picture">
       </div>
-      <label for="fileInput" class="edit-icon">✏️</label>
+      <label for="fileInput" class="edit-icon"><i class="fas fa-edit icon-animate"></i></label>
       <input type="file" id="fileInput" accept="image/*" style="display: none;">
     </div>
 
