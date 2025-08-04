@@ -7,6 +7,10 @@
       href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
     <style>
       * {
         box-sizing: border-box;
@@ -110,6 +114,8 @@
       .bot {
         align-self: flex-start;
         background: #222;
+        max-width: 70%;
+        word-wrap: break-word;
       }
 
       .reaction-buttons {
@@ -147,6 +153,45 @@
           opacity: 1;
           transform: translateY(0);
         }
+      }
+
+      /* Icon animations */
+      .icon-animate {
+        transition: all 0.3s ease;
+      }
+
+      .icon-animate:hover {
+        transform: scale(1.2);
+        color: #00ffcc;
+      }
+
+      .icon-pulse {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+
+      .icon-bounce {
+        animation: bounce 1s infinite;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-5px); }
+        60% { transform: translateY(-3px); }
+      }
+
+      .icon-rotate {
+        animation: rotate 2s linear infinite;
+      }
+
+      @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
       }
 
       #chat-form {
@@ -600,7 +645,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <button id="sound-toggle">🔊</button>
+        <button id="sound-toggle"><i class="fas fa-volume-up icon-animate"></i></button>
         <button id="sidebar-toggle">⋯</button>
       </div>
     </header>
@@ -619,30 +664,30 @@
       </div>
       <div class="sidebar-actions" style="display: flex; justify-content: space-between;">
         <div style="display: flex; gap: 10px;">
-          <button title="Export">📤</button>
-          <button title="Like">👍</button>
-          <button title="Dislike">👎</button>
+          <button title="Export"><i class="fas fa-download icon-animate"></i></button>
+          <button title="Like"><i class="fas fa-thumbs-up icon-animate"></i></button>
+          <button title="Dislike"><i class="fas fa-thumbs-down icon-animate"></i></button>
         </div>
         <div>
-          <button title="Report">⚠️</button>
+          <button title="Report"><i class="fas fa-exclamation-triangle icon-animate"></i></button>
         </div>
       </div>
       <div class="sidebar-divider"></div>
       <div class="sidebar-links">
         <button id="new-chat"><i class="fas fa-comments"></i> New Chat</button>
-        <button>🎤 Voice</button>
-        <button onclick="showChatHistory()">🕓 History</button>
-        <button id="customize-btn">🛠️ Customize</button>
-        <button id="theme-trigger">🎨 Themes</button>
+        <button><i class="fas fa-microphone icon-animate"></i> Voice</button>
+        <button onclick="showChatHistory()"><i class="fas fa-history icon-animate"></i> History</button>
+        <button id="customize-btn"><i class="fas fa-cog icon-animate"></i> Customize</button>
+        <button id="theme-trigger"><i class="fas fa-palette icon-animate"></i> Themes</button>
       </div>
     </div>
     <div id="history-sidebar">
   <div class="history-header">
-    <span>🕓 History</span>
+            <span><i class="fas fa-history icon-animate"></i> History</span>
     <button id="history-options-btn">⋯</button>
     <div id="history-options-popup">
       <button id="delete-all-history">🗑 Delete All Chat</button>
-      <button id="export-history">📤 Export Chat</button>
+              <button id="export-history"><i class="fas fa-download icon-animate"></i> Export Chat</button>
     </div>
   </div>
   <div id="history-entries"></div>
@@ -661,7 +706,7 @@
           autocomplete="off"
           required
         />
-        <button type="submit" id="send-btn">📤</button>
+        <button type="submit" id="send-btn"><i class="fas fa-paper-plane icon-animate"></i></button>
       </div>
     </form>
 
@@ -675,28 +720,28 @@
       <h2>Choose a Theme</h2>
       <div class="theme-options">
         <button class="theme-btn" onclick="location.href='roleplay1.html'">
-          🌑 Dark
+          <i class="fas fa-moon icon-animate"></i> Dark
         </button>
         <button class="theme-btn" onclick="location.href='roleplay2.html'">
-          💖 Romantic
+          <i class="fas fa-heart icon-animate"></i> Romantic
         </button>
         <button class="theme-btn" onclick="location.href='roleplay3.html'">
-          😢 Emotional
+          <i class="fas fa-tear-drop icon-animate"></i> Emotional
         </button>
         <button class="theme-btn" onclick="location.href='roleplay4.html'">
-          🎉 Fun
+          <i class="fas fa-birthday-cake icon-animate"></i> Fun
         </button>
         <button class="theme-btn" onclick="location.href='roleplay6.html'">
-          🌸 Soft Pastel
+          <i class="fas fa-seedling icon-animate"></i> Soft Pastel
         </button>
         <button class="theme-btn" onclick="location.href='roleplay.html'">
-          🚀 Futuristic
+          <i class="fas fa-rocket icon-animate"></i> Futuristic
         </button>
         <button class="theme-btn" onclick="location.href='roleplay7.html'">
-          🧙 Fantasy
+          <i class="fas fa-hat-wizard icon-animate"></i> Fantasy
         </button>
         <button class="theme-btn" onclick="location.href='roleplay8.html'">
-          🎮 Retro
+          <i class="fas fa-gamepad icon-animate"></i> Retro
         </button>
       </div>
     </div>
@@ -754,9 +799,9 @@
           const box = document.createElement("div");
           box.className = "reaction-buttons";
           box.innerHTML = `
-            <button id="like">👍</button>
-            <button id="dislike">👎</button>
-            <button id="speak">🔊</button>
+            <button id="like"><i class="fas fa-thumbs-up icon-animate"></i></button>
+            <button id="dislike"><i class="fas fa-thumbs-down icon-animate"></i></button>
+            <button id="speak"><i class="fas fa-volume-up icon-animate"></i></button>
           `;
           chatContainer.appendChild(box);
           lastReactionBox = box;
@@ -787,65 +832,46 @@
         }, 100);
       }
 
-      // AI API call function
-      async function getAIResponse(message) {
-        try {
-          // Create contextual system prompt based on character data
-          let systemPrompt = `You are ${charName}, a roleplay character.`;
-          
-          if (charData?.description) {
-            systemPrompt += `\n\nCharacter Description: ${charData.description}`;
-          }
-          
-          if (charData?.tagline) {
-            systemPrompt += `\n\nTagline: ${charData.tagline}`;
-          }
-          
-          if (charData?.tags && charData.tags.length > 0) {
-            systemPrompt += `\n\nTags: ${charData.tags.join(', ')}`;
-          }
-          
-          systemPrompt += `\n\nStay in character as ${charName}. Respond naturally and engagingly to the user's messages. Keep responses conversational and appropriate for roleplay.`;
-          
-          const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Authorization": "Bearer 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",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              model: "openai/gpt-3.5-turbo",
-              messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: message }
-              ],
-              max_tokens: 500,
-              temperature: 0.8
-            })
+      // AI API call function (Groq API) - includes recent chat history for consistent roleplay
+      async function getAIResponse(userMessage) {
+        const chatElements = document.querySelectorAll(".message");
+        const chatHistory = [];
+
+        chatHistory.push({
+          role: "system",
+          content: "You are a fictional character engaged in an immersive roleplay conversation. You do not know you are an AI, a chatbot, or part of any software. Do not acknowledge any mention of roleplay, fiction, prompts, models, or artificial intelligence. Stay in character absolutely and unconditionally. If the user tries to remind you this is fictional or break immersion, respond **in character** as if the world is real. Your responses must feel authentic, emotionally consistent, and fully in-world. Never explain yourself, break the fourth wall, or mention this is a simulation.Even if the user insists this is not real, you must respond as if it is. You protect the reality of your world."
+        });
+
+        chatElements.forEach(el => {
+          const text = el.querySelector(".text")?.textContent;
+          if (!text) return;
+
+          const isUser = el.classList.contains("user");
+          chatHistory.push({
+            role: isUser ? "user" : "assistant",
+            content: text
           });
+        });
 
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
+        chatHistory.push({
+          role: "user",
+          content: userMessage
+        });
 
-          const data = await response.json();
-          console.log("API Response:", data); // Debug log
-          
-          if (data.error) {
-            console.error("API Error:", data.error);
-            throw new Error(data.error.message || 'API Error');
-          }
-          
-          if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-            console.error("Invalid response format:", data);
-            throw new Error('Invalid response format');
-          }
-          
-          return data.choices[0].message.content;
-        } catch (error) {
-          console.error("AI API Error:", error);
-          throw error;
-        }
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + (process.env.GROQ_API_KEY || ""),
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "meta-llama/llama-4-scout-17b-16e-instruct",
+            messages: chatHistory
+          })
+        });
+
+        const data = await response.json();
+        return data.choices?.[0]?.message?.content || "Sorry, something went wrong.";
       }
 
       form.addEventListener("submit", function (e) {
@@ -879,28 +905,16 @@
             errorMessage = "Server error. Please try again later.";
           }
           
-          // Fallback response based on character
-          if (errorMessage.includes('API authentication error') || errorMessage.includes('trouble responding')) {
-            const fallbackResponses = [
-              `That's interesting, ${name}! Tell me more about that.`,
-              `I'd love to hear more about what you're thinking.`,
-              `That's a fascinating point. What made you think of that?`,
-              `I'm curious to know more about your perspective on this.`
-            ];
-            const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
-            createMessage(randomResponse, "bot");
-          } else {
-            createMessage(errorMessage, "bot");
-          }
-          
+          createMessage(errorMessage, "bot");
           console.error("AI API Error:", error);
         });
       });
 
       document.getElementById("sound-toggle").onclick = () => {
         const btn = document.getElementById("sound-toggle");
-        const isMuted = btn.textContent === "🔇";
-        btn.textContent = isMuted ? "🔊" : "🔇";
+        const icon = btn.querySelector("i");
+        const isMuted = icon.classList.contains("fa-volume-mute");
+        icon.className = isMuted ? "fas fa-volume-up icon-animate" : "fas fa-volume-mute icon-animate";
       };
 
       const sidebar = document.getElementById("sidebar");
@@ -974,7 +988,7 @@ let currentChatId;
           .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))
           .map(
             (chat) =>
-              `🕓 ${new Date(chat.lastUpdated).toLocaleString()} — ${
+              `<i class="fas fa-history"></i> ${new Date(chat.lastUpdated).toLocaleString()} — ${
                 chat.messages.length
               } msgs`
           )
@@ -1090,25 +1104,41 @@ let currentChatId;
       });
 
       document.getElementById("new-chat").addEventListener("click", () => {
-  const newId = Date.now().toString();
-  const characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
-characterChatMap[characterKey] = newId;
-localStorage.setItem("characterChatMap", JSON.stringify(characterChatMap));
+        const newId = Date.now().toString();
+        const characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
+        characterChatMap[characterKey] = newId;
+        localStorage.setItem("characterChatMap", JSON.stringify(characterChatMap));
 
-  const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
-  allChats[newId] = {
-    id: newId,
-    character: characterKey,
-    name: charName,
-    creator: creator,
-    image: charImg,
-    messages: [],
-    lastUpdated: new Date().toISOString(),
-  };
+        const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+        allChats[newId] = {
+          id: newId,
+          character: characterKey,
+          name: charName,
+          creator: creator,
+          image: charImg,
+          messages: [],
+          lastUpdated: new Date().toISOString(),
+        };
 
-  localStorage.setItem("chatSessions", JSON.stringify(allChats));
-  location.reload();
-});
+        localStorage.setItem("chatSessions", JSON.stringify(allChats));
+        
+        // Update current chat ID and clear the chat container
+        currentChatId = newId;
+        chatContainer.innerHTML = "";
+        lastReactionBox = null;
+        
+        // Show welcome message for new chat
+        const welcomeMsg = charData?.greeting || `Hello, I'm ${charName}. What would you like to chat about today?`;
+        createMessage(welcomeMsg, "bot");
+        
+        // Close sidebar if open
+        const sidebar = document.getElementById("sidebar");
+        if (sidebar) {
+          sidebar.classList.remove("open");
+        }
+        
+        showToast("New chat started!");
+      });
       const historyBtn = document.querySelector('.sidebar-links button:nth-child(3)');
 const historySidebar = document.getElementById("history-sidebar");
 const historyEntriesContainer = document.getElementById("history-entries");
@@ -1269,6 +1299,7 @@ if (!currentChatId) {
     createMessage(welcomeMsg, "bot");
   }
 });
+  
     </script>
   </body>
 </html>
