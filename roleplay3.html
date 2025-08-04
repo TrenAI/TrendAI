@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TrendAI Roleplay - Emotional</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background-color: #0a0e1a;
+      color: #e0e0f0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background-color: #111827;
+      border-bottom: 1px solid #6ee7b7;
+      z-index: 2;
+    }
+
+    .character-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .character-info img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid #38bdf8;
+    }
+
+    .character-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .character-meta span:first-child {
+      font-weight: bold;
+      color: #7dd3fc;
+    }
+
+    .character-meta span:last-child {
+      font-size: 0.75em;
+      color: #9ca3af;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-actions button {
+      background: none;
+      border: none;
+      color: #60a5fa;
+      font-size: 1.3em;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .header-actions button:hover {
+      transform: scale(1.2);
+    }
+
+    #chat-box {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+      background: linear-gradient(to bottom, #0f172a, #1e293b);
+    }
+
+    #chat-container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 10px;
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 14px;
+      line-height: 1.6;
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #7dd3fc, #38bdf8);
+      color: #0f172a;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background: #1e3a8a;
+      color: #f0f9ff;
+    }
+
+    .reactions {
+      font-size: 0.9em;
+      color: #94a3b8;
+      margin-top: 4px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .reactions span {
+      cursor: pointer;
+    }
+
+    #chat-form {
+      display: flex;
+      justify-content: center;
+      padding: 10px 20px;
+      background-color: #111827;
+    }
+
+    .input-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    #user-input {
+      width: 100%;
+      padding: 12px 44px 12px 14px;
+      border-radius: 20px;
+      background: #1f2937;
+      border: none;
+      color: #93c5fd;
+      font-size: 1em;
+    }
+
+    #user-input:focus {
+      outline: none;
+      box-shadow: 0 0 12px #7dd3fcaa;
+    }
+
+    #send-btn {
+      position: absolute;
+      top: 50%;
+      right: 6px;
+      transform: translateY(-50%);
+      background: #60a5fa;
+      color: #0f172a;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #disclaimer {
+      text-align: center;
+      font-size: 0.75em;
+      color: #94a3b8;
+      padding: 10px;
+      background-color: #0a0e1a;
+    }
+
+    #sidebar {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      height: 100%;
+      background-color: #1f2937;
+      border-left: 1px solid #7dd3fc55;
+      padding: 20px;
+      transition: right 0.4s ease;
+      z-index: 3;
+    }
+
+    #sidebar.open {
+      right: 0;
+    }
+
+    .sidebar-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .sidebar-top img {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      border: 2px solid #7dd3fc;
+    }
+
+    .meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta .name {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #bae6fd;
+    }
+
+    .meta .username {
+      font-size: 0.9em;
+      color: #cbd5e1;
+    }
+
+    .sidebar-actions {
+      margin: 16px 0;
+      display: flex;
+      gap: 12px 16px;
+      flex-wrap: wrap;
+    }
+
+    .sidebar-actions button {
+      background: none;
+      border: none;
+      color: #7dd3fc;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    .description {
+      font-size: 0.9em;
+      color: #e0f2fe;
+      margin-top: 10px;
+    }
+
+    .divider {
+      border-top: 1px solid #7dd3fc33;
+      margin: 16px 0;
+    }
+
+    .sidebar-links button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background: #334155;
+      color: #7dd3fc;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .sidebar-links button:hover {
+      background-color: #7dd3fc22;
+    }
+
+    #theme-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 10;
+      display: none;
+    }
+
+    #theme-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background-color: #1e293b;
+      color: #7dd3fc;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(125, 211, 252, 0.3);
+      z-index: 11;
+      display: none;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      width: 280px;
+    }
+
+    #theme-popup.active {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    #theme-popup h2 {
+      text-align: center;
+      margin-bottom: 16px;
+      font-size: 1.2em;
+      color: #ffffff;
+    }
+
+    .theme-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .theme-btn {
+      flex: 1 1 calc(50% - 10px);
+      padding: 10px;
+      border: none;
+      background: #334155;
+      color: #7dd3fc;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .theme-btn:hover {
+      background: #7dd3fc33;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="character-info">
+      <img id="char-img" src="" alt="Character" />
+      <div class="character-meta">
+        <span id="char-name">Character</span>
+        <span id="creator">by Creator</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="sound-toggle">🔊</button>
+      <button id="sidebar-toggle">⋯</button>
+    </div>
+  </header>
+
+  <div id="sidebar">
+    <div class="sidebar-top">
+      <img id="sidebar-img" src="https://via.placeholder.com/100" alt="Character" />
+      <div class="meta">
+        <div class="name" id="sidebar-char-name">Character</div>
+        <div class="username" id="sidebar-username">@username</div>
+      </div>
+    </div>
+    <div class="sidebar-actions">
+      <button title="Export">📤</button>
+      <button title="Like">👍</button>
+      <button title="Dislike">👎</button>
+      <span style="width: 12px;"></span>
+      <button title="Report">⚠️</button>
+      <button title="More">⋯</button>
+    </div>
+    <div class="description" id="sidebar-description">This character is thoughtful and emotional, ready to explore deep conversations...</div>
+    <div class="divider"></div>
+    <div class="sidebar-links">
+      <button><i class="fas fa-comments"></i> New Chat</button>
+      <button>🎤 Voice</button>
+      <button>🕓 History</button>
+      <button>🛠️ Customize</button>
+      <button id="theme-trigger">🎨 Themes</button>
+    </div>
+  </div>
+
+  <div id="chat-box">
+    <div id="chat-container"></div>
+  </div>
+
+  <form id="chat-form">
+    <div class="input-wrapper">
+      <input type="text" id="user-input" placeholder="Say something..." autocomplete="off" required />
+      <button type="submit" id="send-btn">📤</button>
+    </div>
+  </form>
+
+  <div id="disclaimer">This is a fictional AI character for roleplay. Replies are not real or factual — just for fun.</div>
+
+  <!-- Theme Popup -->
+  <div id="theme-overlay"></div>
+  <div id="theme-popup">
+    <h2>Choose a Theme</h2>
+    <div class="theme-options">
+            <button class="theme-btn" onclick="window.location.href='roleplay1.html'">🌑 Dark</button>
+      <button class="theme-btn" onclick="window.location.href='roleplay2.html'">💖 Romantic</button>
+       <button class="theme-btn" onclick="window.location.href='roleplay3.html'">😢 Emotional</button>
+       <button class="theme-btn" onclick="window.location.href='roleplay4.html'">🎉 Fun</button>
+       <button class="theme-btn" onclick="window.location.href='roleplay6.html'"> 🌸 Soft Pastel </button>
+      <button class="theme-btn" onclick="window.location.href='roleplay.html'">🚀 Futuristic</button>
+       <button class="theme-btn" onclick="window.location.href='roleplay7.html'"> 🧙 Fantasy </button>
+       <button class="theme-btn" onclick="window.location.href='roleplay8.html'"> 🎮 Retro</button>
+    </div>
+  </div>
+
+  <script>
+    const characterKey = localStorage.getItem("roleplayCharacter");
+    const characters = JSON.parse(localStorage.getItem("characters")) || [];
+    const profile = JSON.parse(localStorage.getItem("userProfile")) || { username: "unknown" };
+    const charData = characters.find(c => c.name === characterKey);
+    const name = profile.displayName || "You";
+    const charName = charData?.name || "AI";
+    const charImg = charData?.image || "https://via.placeholder.com/100";
+    const creator = profile.username || "unknown";
+
+    document.getElementById("char-name").textContent = charName;
+    document.getElementById("char-img").src = charImg;
+    document.getElementById("creator").textContent = `by ${creator}`;
+    document.getElementById("sidebar-char-name").textContent = charName;
+    document.getElementById("sidebar-img").src = charImg;
+    document.getElementById("sidebar-username").textContent = `@${creator}`;
+    document.getElementById("sidebar-description").textContent = charData?.description || "No description provided.";
+
+    const chatContainer = document.getElementById("chat-container");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("user-input");
+    let isMuted = false;
+
+    function createMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chatContainer.appendChild(msg);
+      msg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+      if (sender === "bot") {
+        const react = document.createElement("div");
+        react.className = "reactions";
+        react.innerHTML = '<span>👍</span><span>👎</span><span>🔊</span>';
+        msg.appendChild(react);
+      }
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const userText = input.value.trim();
+      if (!userText) return;
+      createMessage(userText, "user");
+      input.value = "";
+
+      setTimeout(() => {
+        createMessage(`That's something worth exploring... "${userText}"`, "bot");
+      }, 700);
+    });
+
+    document.getElementById("sound-toggle").onclick = () => {
+      isMuted = !isMuted;
+      document.getElementById("sound-toggle").textContent = isMuted ? "🔇" : "🔊";
+    };
+
+    const sidebar = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("sidebar-toggle");
+    toggleBtn.onclick = () => {
+      sidebar.classList.toggle("open");
+    };
+
+    document.addEventListener("click", (e) => {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove("open");
+      }
+    });
+
+    createMessage(`Hi ${name}, ready for something heartfelt?`, "bot");
+
+    const themeBtn = document.getElementById("theme-trigger");
+    const themePopup = document.getElementById("theme-popup");
+    const themeOverlay = document.getElementById("theme-overlay");
+
+    themeBtn.addEventListener("click", () => {
+      themePopup.classList.add("active");
+      themeOverlay.style.display = "block";
+    });
+
+    themeOverlay.addEventListener("click", () => {
+      themePopup.classList.remove("active");
+      themeOverlay.style.display = "none";
+    });
+  </script>
+</body>
+</html>

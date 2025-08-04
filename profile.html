@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TrendAI - Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background-color: #0c0c0c;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      backdrop-filter: blur(6px);
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+
+    .profile-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 360px;
+      max-width: 90vw;
+      background-color: #1a1a1a;
+      padding: 30px 25px;
+      border-radius: 18px;
+      z-index: 2;
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.5);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 20px;
+      color: #aaa;
+      cursor: pointer;
+      z-index: 3;
+      transition: color 0.2s ease;
+    }
+
+    .close-btn:hover {
+      color: #fff;
+    }
+
+    .profile-picture-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+    }
+
+    .profile-picture-wrapper {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      background-color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #00ffcc;
+      box-shadow: 0 0 12px rgba(0,255,204,0.4);
+    }
+
+    .profile-picture-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .edit-icon {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      transform: translate(30%, 30%);
+      background-color: #00ffcc;
+      color: #121212;
+      padding: 6px 8px;
+      border-radius: 50%;
+      font-size: 0.9em;
+      cursor: pointer;
+      z-index: 5;
+      box-shadow: 0 0 6px rgba(0, 255, 204, 0.6);
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .edit-icon:hover {
+      transform: translate(30%, 30%) scale(1.1);
+      background-color: #00bfa6;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      border: none;
+      border-radius: 8px;
+      background-color: #2b2b2b;
+      color: #e0e0e0;
+      font-size: 14px;
+      box-shadow: inset 0 0 5px rgba(0,255,204,0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    input:focus,
+    textarea:focus {
+      background-color: #333;
+      outline: 1px solid #00ffcc;
+    }
+
+    textarea {
+      resize: none;
+      height: 80px;
+      overflow-y: auto;
+    }
+
+    button {
+      width: 100%;
+      background-color: #00ffcc;
+      color: #121212;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
+    }
+
+    button:hover {
+      background-color: #00bfa6;
+      transform: scale(1.03);
+    }
+
+    .social-link-label {
+      font-size: 0.9em;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="profile-popup" id="popup">
+    <div class="close-btn" onclick="closeProfile()">✖️</div>
+
+    <div class="profile-picture-container">
+      <div class="profile-picture-wrapper">
+        <img id="profileImage" src="https://via.placeholder.com/120" alt="Profile Picture">
+      </div>
+      <label for="fileInput" class="edit-icon">✏️</label>
+      <input type="file" id="fileInput" accept="image/*" style="display: none;">
+    </div>
+
+    <input type="text" id="username" maxlength="20" disabled>
+    <input type="text" id="displayName" placeholder="Display Name (max 20 chars)" maxlength="20">
+    <textarea id="description" maxlength="300" placeholder="Tell us about yourself (max 300 chars)..."></textarea>
+
+    <div class="social-link-label">🌐 Link Socials</div>
+    <input type="text" id="socialLink" placeholder="Paste your website, Instagram, etc.">
+
+    <button onclick="saveProfile()">💾 Save Changes</button>
+  </div>
+
+  <script>
+    function getRandomUsername() {
+      const num = Math.floor(Math.random() * 5000);
+      return `Trender${num}`;
+    }
+
+    function saveProfile() {
+      const username = document.getElementById("username").value.trim();
+      const displayName = document.getElementById("displayName").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const socialLink = document.getElementById("socialLink").value.trim();
+
+      const profile = {
+        username,
+        displayName,
+        description,
+        socialLink
+      };
+      const currentImage = document.getElementById("profileImage").src;
+      profile.profileImage = currentImage;
+
+      localStorage.setItem("userProfile", JSON.stringify(profile));
+      alert("✅ Profile saved!");
+      window.history.back();
+    }
+
+    function closeProfile() {
+      window.history.back();
+    }
+
+    window.onload = () => {
+      const overlay = document.getElementById("overlay");
+      overlay.addEventListener("click", closeProfile);
+
+      const fileInput = document.getElementById("fileInput");
+      const profileImage = document.getElementById("profileImage");
+      const usernameInput = document.getElementById("username");
+      const displayNameInput = document.getElementById("displayName");
+      const descriptionInput = document.getElementById("description");
+      const socialLinkInput = document.getElementById("socialLink");
+
+      let profile = JSON.parse(localStorage.getItem("userProfile")) || {};
+
+      if (!profile.username) {
+        profile.username = getRandomUsername();
+        localStorage.setItem("userProfile", JSON.stringify(profile));
+      }
+
+      if (profile.profileImage) {
+        profileImage.src = profile.profileImage;
+      }
+
+      usernameInput.value = profile.username || "";
+      displayNameInput.value = profile.displayName || "";
+      descriptionInput.value = profile.description || "";
+      socialLinkInput.value = profile.socialLink || "";
+
+      fileInput.addEventListener("change", function () {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const profileImageData = e.target.result;
+      profileImage.src = profileImageData;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+    };
+  </script>
+
+</body>
+</html>

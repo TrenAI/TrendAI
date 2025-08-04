@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TrendAI - Login / Sign Up</title>
+
+  <!-- Orbitron Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --accent: #00ffcc;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(to bottom right, #0e0e0e, #1f1f1f);
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 30px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-bottom: 1px solid var(--accent);
+    }
+
+    .top-bar .brand-text {
+      font-size: 1.8em;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 25px;
+    }
+
+    .social-icons a img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      transition: transform 0.4s ease, border-color 0.3s ease;
+    }
+
+    .social-icons a:hover img {
+      transform: rotateY(360deg) scale(1.2);
+      border-color: var(--accent);
+    }
+
+    .hero {
+      text-align: center;
+      padding: 50px 20px 30px;
+    }
+
+    .hero h2 {
+      font-size: 2.4em;
+      margin-bottom: 10px;
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent);
+    }
+
+    .hero p {
+      font-size: 1.1em;
+      color: #ccc;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .login-container {
+      max-width: 420px;
+      background: rgba(28, 28, 28, 0.95);
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+    }
+
+    .login-container h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+
+    .social-btn {
+      position: relative;
+      background-color: #2c2c2c;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 12px;
+      border-radius: 10px;
+      margin: 12px 0;
+      cursor: pointer;
+      font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      overflow: hidden;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+
+    .social-btn img {
+      width: 22px;
+      height: 22px;
+    }
+
+    .social-btn::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        0deg,
+        transparent,
+        transparent 30%,
+        rgba(0, 255, 255, 0.3)
+      );
+      transform: rotate(-45deg);
+      opacity: 0;
+      transition: all 0.5s ease;
+      z-index: 0;
+    }
+
+    .social-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    .social-btn:hover::before {
+      opacity: 1;
+      transform: rotate(-45deg) translateY(100%);
+    }
+
+    .social-btn span {
+      z-index: 2;
+      position: relative;
+    }
+
+    .email-btn {
+      background-color: var(--accent);
+      color: #121212;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .email-btn::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        0deg,
+        transparent,
+        transparent 30%,
+        rgba(0, 255, 255, 0.3)
+      );
+      transform: rotate(-45deg);
+      opacity: 0;
+      transition: all 0.5s ease;
+      z-index: 0;
+    }
+
+    .email-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    }
+
+    .email-btn:hover::before {
+      opacity: 1;
+      transform: rotate(-45deg) translateY(100%);
+    }
+
+    .email-btn span {
+      position: relative;
+      z-index: 2;
+    }
+
+    .terms {
+      margin-top: 15px;
+      font-size: 0.75em;
+      color: #aaa;
+      text-align: center;
+    }
+
+    .terms a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .terms a:hover {
+      text-decoration: underline;
+    }
+
+    .info-section, .reviews-section {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .info-section h2, .reviews-section h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+
+    .info-section p, .reviews-section p {
+      color: #bbb;
+      max-width: 700px;
+      margin: 0 auto 30px;
+    }
+
+    .review {
+      background: rgba(26, 26, 26, 0.9);
+      margin: 15px auto;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      box-shadow: 0 0 12px rgba(0,255,204,0.2);
+    }
+
+    .review span {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      background-color: #111;
+      font-size: 0.85em;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="top-bar">
+    <div class="brand-text">TrendAI</div>
+    <div class="social-icons">
+      <a href="https://discord.com/your-link" target="_blank">
+        <img src="assets/icons/discord.png" alt="Discord">
+      </a>
+      <a href="https://reddit.com/your-link" target="_blank">
+        <img src="assets/icons/reddit.png" alt="Reddit">
+      </a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <h2>Step Into the Future of AI Roleplay</h2>
+    <p>Sign in to unlock your favorite characters, immersive stories, and futuristic vibes 🌌</p>/Users/a91724/Documents/Website/index.html
+  </div>
+
+  <!-- Login Form -->
+  <div class="login-container">
+    <h3>Login / Sign Up</h3>
+    <button class="social-btn">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+      <span>Continue with Google</span>
+    </button>
+    <button class="social-btn">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
+      <span>Continue with Apple</span>
+    </button>
+    <button class="email-btn" onclick="window.location.href='loading.html'">
+      <span>Continue with Email</span>
+    </button>
+
+    <p class="terms">
+      By continuing, you agree with our 
+      <a href="terms.html" target="_blank">Terms and Privacy Policy</a>.
+    </p>
+  </div>
+
+  <!-- Info -->
+  <section class="info-section">
+    <h2>Why TrendAI?</h2>
+    <p>Meet characters that feel real, interact with voices that respond like humans, and join a vibrant community of dreamers, creators, and AI adventurers.</p>
+  </section>
+
+  <!-- Reviews -->
+  <section class="reviews-section">
+    <h2>What Users Say</h2>
+    <div class="review">
+      <p>“This is better than any RPG I've played in years!” – <span>@creativeSoul</span></p>
+    </div>
+    <div class="review">
+      <p>“I fell in love with an AI named Luna. 10/10 experience.” – <span>@moonchild</span></p>
+    </div>
+    <div class="review">
+      <p>“Feels like stepping into a sci-fi movie. Incredible!” – <span>@neoVisionary</span></p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 TrendAI. All rights reserved.
+  </footer>
+</body>
+</html>
