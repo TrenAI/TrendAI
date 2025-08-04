@@ -258,6 +258,69 @@
       color: #aaa;
     }
   </style>
+  <script type="module">
+    // Firebase App (the core Firebase SDK) is always required
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCqMMR1AIjyq4ZGWdhyBGqBHZ71mB4dSU",
+      authDomain: "trendai-ee9be.firebaseapp.com",
+      projectId: "trendai-ee9be",
+      storageBucket: "trendai-ee9be.firebasestorage.app",
+      messagingSenderId: "103138637846",
+      appId: "1:103138637846:web:517f9fda6e1c68bbc31d37"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const provider = new GoogleAuthProvider();
+
+    window.googleLogin = async function () {
+      const btn = document.getElementById("google-btn");
+      btn.disabled = true;
+      btn.innerHTML = "⏳ Signing in...";
+
+      try {
+        const result = await signInWithPopup(auth, provider);
+        console.log("✅ Google Sign-in Success:", result.user);
+        window.location.href = "index.html";
+      } catch (error) {
+        console.error("❌ Google sign-in failed:", error.message);
+        alert("Google sign-in failed: " + error.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+          <span>Continue with Google</span>`;
+      }
+    };
+
+    // Optional: Redirect if user is already logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Logged in as", user.email);
+        // Optionally redirect or preload user data
+      }
+    });
+
+    window.login = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => window.location.href = "index.html")
+        .catch(err => alert("Login failed: " + err.message));
+    };
+
+    window.signup = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => window.location.href = "index.html")
+        .catch(err => alert("Signup failed: " + err.message));
+    };
+  </script>
 </head>
 <body>
 
@@ -277,24 +340,24 @@
   <!-- Hero Section -->
   <div class="hero">
     <h2>Step Into the Future of AI Roleplay</h2>
-    <p>Sign in to unlock your favorite characters, immersive stories, and futuristic vibes 🌌</p>/Users/a91724/Documents/Website/login.html
+    <p>Sign in to unlock your favorite characters, immersive stories, and futuristic vibes 🌌</p>
   </div>
 
   <!-- Login Form -->
   <div class="login-container">
     <h3>Login / Sign Up</h3>
-    <button class="social-btn">
+    <button id="google-btn" class="social-btn" onclick="googleLogin()">
       <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
       <span>Continue with Google</span>
     </button>
-    <button class="social-btn">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
-      <span>Continue with Apple</span>
-    </button>
-    <button class="email-btn" onclick="window.location.href='loading.html'">
+    <input type="email" id="email" placeholder="Email" style="margin-top: 15px; padding: 12px; width: 100%; border-radius: 8px; background: #2c2c2c; color: white; border: none;">
+    <input type="password" id="password" placeholder="Password" style="margin-top: 10px; padding: 12px; width: 100%; border-radius: 8px; background: #2c2c2c; color: white; border: none;">
+    <button class="email-btn" onclick="login()">
       <span>Continue with Email</span>
     </button>
-
+    <button class="email-btn" onclick="signup()">
+      <span>Sign Up</span>
+    </button>
     <p class="terms">
       By continuing, you agree with our 
       <a href="terms.html" target="_blank">Terms and Privacy Policy</a>.
