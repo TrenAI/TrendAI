@@ -316,7 +316,16 @@ if (nameFromURL) {
         selectedTags.forEach((tag) => {
           const tagEl = document.createElement("div");
           tagEl.className = "selected-tag";
-          tagEl.innerHTML = `${tag}<span onclick="removeTag('${tag}')">&times;</span>`;
+          
+          // Safely create text content to prevent XSS
+          const tagText = document.createTextNode(tag);
+          const removeSpan = document.createElement("span");
+          removeSpan.textContent = "×";
+          removeSpan.style.cursor = "pointer";
+          removeSpan.onclick = () => removeTag(tag);
+          
+          tagEl.appendChild(tagText);
+          tagEl.appendChild(removeSpan);
           selectedTagsContainer.appendChild(tagEl);
         });
       }
@@ -349,7 +358,13 @@ if (nameFromURL) {
         const description = document.getElementById("description").value.trim();
         const greeting = document.getElementById("greeting").value.trim();
         const avatarImg = document.getElementById("avatarImage").src || null;
-        const profile = JSON.parse(localStorage.getItem("userProfile")) || {};
+        let profile;
+        try {
+          profile = JSON.parse(localStorage.getItem("userProfile")) || {};
+        } catch (e) {
+          console.warn("Failed to parse userProfile from localStorage, using empty object:", e);
+          profile = {};
+        }
         const username = profile.username || "unknown";
 
         if (!name || !tagline || !description || !greeting) {

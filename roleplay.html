@@ -833,12 +833,24 @@
 
       // (placeholder for createMessage, replaced above)
 
-let allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+let allChats;
+try {
+  allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+} catch (e) {
+  console.warn("Failed to parse chatSessions from localStorage, using empty object:", e);
+  allChats = {};
+}
 const currentCharacter = localStorage.getItem("roleplayCharacter");
 let currentChatId;
 
       function saveMessageToChat(text, sender) {
-        const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+        let allChats;
+        try {
+          allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+        } catch (e) {
+          console.warn("Failed to parse chatSessions from localStorage, using empty object:", e);
+          allChats = {};
+        }
         if (!allChats[currentChatId]) {
           allChats[currentChatId] = {
             id: currentChatId,
@@ -862,7 +874,13 @@ let currentChatId;
       }
 
       function showChatHistory() {
-        const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+        let allChats;
+        try {
+          allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+        } catch (e) {
+          console.warn("Failed to parse chatSessions from localStorage, using empty object:", e);
+          allChats = {};
+        }
         const currentCharacter = localStorage.getItem("roleplayCharacter");
 
         const chatsForChar = Object.values(allChats).filter(
@@ -1054,10 +1072,18 @@ deleteAllBtn.onclick = () => {
   }
 };
 
-exportBtn.onclick = () => {
-  const all = JSON.parse(localStorage.getItem("chatSessions")) || {};
+function exportCurrentChat() {
+  let all, characterChatMap;
+  try {
+    all = JSON.parse(localStorage.getItem("chatSessions")) || {};
+    characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
+  } catch (e) {
+    console.warn("Failed to parse localStorage data for export:", e);
+    alert("Failed to access chat data for export.");
+    return;
+  }
+
   const currentCharacter = localStorage.getItem("roleplayCharacter");
-  const characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
   const currentChatId = characterChatMap[currentCharacter];
   const chat = all[currentChatId];
 
@@ -1071,34 +1097,18 @@ exportBtn.onclick = () => {
     .join("\n");
 
   const blob = new Blob([chatText], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
+  a.href = url;
   a.download = `${charName}-chat.txt`;
   a.click();
-};
+  
+  // Clean up the object URL to prevent memory leaks
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+}
 
-sidebarExportBtn.onclick = () => {
-  const all = JSON.parse(localStorage.getItem("chatSessions")) || {};
-  const currentCharacter = localStorage.getItem("roleplayCharacter");
-  const characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
-  const currentChatId = characterChatMap[currentCharacter];
-  const chat = all[currentChatId];
-
-  if (!chat) {
-    alert("No current chat available to export.");
-    return;
-  }
-
-  const chatText = chat.messages
-    .map((m) => `${m.sender === "user" ? "You" : charName}: ${m.text}`)
-    .join("\n");
-
-  const blob = new Blob([chatText], { type: "text/plain" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `${charName}-chat.txt`;
-  a.click();
-};
+exportBtn.onclick = exportCurrentChat;
+sidebarExportBtn.onclick = exportCurrentChat;
 
 function renderChatHistory() {
   const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
