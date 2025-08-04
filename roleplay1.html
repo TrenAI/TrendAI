@@ -72,11 +72,13 @@
     }
 
     #chat-box {
-      flex: 1;
+      flex: 1 1 auto;
       overflow-y: auto;
       display: flex;
       justify-content: center;
-      padding: 20px 0;
+      align-items: stretch;
+      padding: 24px 0 24px 0;
+      min-height: 0;
     }
 
     #chat-container {
@@ -84,18 +86,23 @@
       max-width: 800px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 0 10px;
+      gap: 18px;
+      padding: 0 18px;
+      flex: 1 1 auto;
     }
 
     .message {
-      padding: 14px 18px;
+      padding: 16px 22px;
       border-radius: 14px;
-      line-height: 1.5;
+      line-height: 1.6;
       position: relative;
       display: inline-block;
-      max-width: 100%;
-      font-size: 1.05em;
+      max-width: 85%;
+      font-size: 1.08em;
+      margin-bottom: 2px;
+      margin-top: 2px;
+      box-shadow: 0 1px 6px #0a0a0a44;
+      word-break: break-word;
     }
 
     .user {
@@ -111,15 +118,26 @@
     }
 
     .reactions {
-      font-size: 0.9em;
+      font-size: 1.05em;
       color: #888;
-      margin-top: 4px;
+      margin-top: 8px;
       display: flex;
-      gap: 10px;
+      gap: 16px;
+      padding-left: 2px;
     }
 
     .reactions span {
       cursor: pointer;
+      transition: color 0.18s, transform 0.15s;
+      border-radius: 4px;
+      padding: 2px 5px;
+      outline: none;
+    }
+    .reactions span:focus,
+    .reactions span:hover {
+      color: #ff0040;
+      background: #ff004022;
+      transform: scale(1.18);
     }
 
     #chat-form {
@@ -178,15 +196,18 @@
 
     #sidebar {
       position: fixed;
-      top: 0;
+      top: 64px;
+      /* header height: 64px (approx 50px + 2*12px) */
       right: -320px;
       width: 300px;
-      height: 100%;
+      height: calc(100% - 64px - 36px); /* minus header and footer/disclaimer */
       background-color: #111;
       border-left: 1px solid #ff004033;
-      padding: 20px;
-      transition: right 0.3s ease-in-out;
-      z-index: 3;
+      padding: 20px 18px 18px 18px;
+      transition: right 0.3s cubic-bezier(.7,.2,.3,1);
+      z-index: 100;
+      box-shadow: -2px 0 12px #0a0a0a33;
+      overflow-y: auto;
     }
 
     #sidebar.open {
@@ -250,18 +271,25 @@
 
     .sidebar-links button {
       width: 100%;
-      margin: 6px 0;
-      padding: 10px;
+      margin: 8px 0;
+      padding: 12px 10px;
       border-radius: 8px;
       background: #222;
       color: #ff0040;
       border: none;
       cursor: pointer;
       text-align: left;
+      font-size: 1.05em;
+      transition: background 0.18s, color 0.16s, box-shadow 0.15s;
+      box-shadow: 0 1px 4px #0a0a0a22;
     }
 
-    .sidebar-links button:hover {
+    .sidebar-links button:hover,
+    .sidebar-links button:focus {
       background-color: #ff004022;
+      color: #fff;
+      outline: none;
+      box-shadow: 0 2px 8px #ff004022;
     }
 
     /* Theme Popup */
@@ -281,20 +309,45 @@
       transform: translate(-50%, -50%) scale(0.8);
       background-color: #1a1a1a;
       color: #ff0040;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(255, 0, 64, 0.3);
-      z-index: 11;
+      padding: 24px 18px 18px 18px;
+      border-radius: 16px;
+      box-shadow: 0 0 18px 4px rgba(255, 0, 64, 0.22), 0 2px 16px 2px #000c;
+      z-index: 101;
       display: none;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      transition: transform 0.26s cubic-bezier(.7,.2,.3,1), opacity 0.26s cubic-bezier(.7,.2,.3,1);
       opacity: 0;
-      width: 280px;
+      width: 320px;
+      max-width: 94vw;
     }
 
     #theme-popup.active {
       display: block;
       opacity: 1;
       transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+    /* Toast Styles */
+    #toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1aee;
+      color: #ff0040;
+      border-radius: 10px;
+      padding: 13px 26px;
+      font-size: 1.05em;
+      box-shadow: 0 3px 18px #ff004055, 0 1px 8px #000a;
+      opacity: 0;
+      transition: opacity 0.25s cubic-bezier(.7,.2,.3,1), bottom 0.25s;
+      z-index: 120;
+      pointer-events: none;
+      text-align: center;
+    }
+    #toast.visible {
+      opacity: 1;
+      bottom: 60px;
+      pointer-events: auto;
     }
 
     #theme-popup h2 {
@@ -351,23 +404,23 @@
       </div>
     </div>
     <div class="sidebar-actions">
-      <button title="Export">📤</button>
-      <button title="Like">👍</button>
-      <button title="Dislike">👎</button>
+      <button id="export-btn" title="Export">📤</button>
+      <button id="like-btn" title="Like">👍</button>
+      <button id="dislike-btn" title="Dislike">👎</button>
       <span style="width: 12px;"></span>
-      <button title="Report">⚠️</button>
-      <button title="More">⋯</button>
+      <button id="report-btn" title="Report">⚠️</button>
     </div>
     <div class="description" id="sidebar-description">This character is shrouded in darkness, ready to lead you into a thrilling tale.</div>
     <div class="divider"></div>
     <div class="sidebar-links">
-      <button><i class="fas fa-comments"></i> New Chat</button>
-      <button>🎤 Voice</button>
-      <button>🕓 History</button>
-      <button>🛠️ Customize</button>
+      <button id="new-chat-btn"><i class="fas fa-comments"></i> New Chat</button>
+      <button id="voice-btn">🎤 Voice</button>
+      <button id="history-btn">🕓 History</button>
+      <button id="customize-btn">🛠️ Customize</button>
       <button id="theme-trigger">🎨 Themes</button>
     </div>
   </div>
+  <div id="toast"></div>
 
   <div id="chat-box">
     <div id="chat-container"></div>
@@ -399,6 +452,7 @@
   </div>
 
   <script>
+    // --- Character and Profile Setup ---
     const characterKey = localStorage.getItem("roleplayCharacter");
     const characters = JSON.parse(localStorage.getItem("characters")) || [];
     const profile = JSON.parse(localStorage.getItem("userProfile")) || { username: "unknown" };
@@ -407,7 +461,6 @@
     const charName = charData?.name || "AI";
     const charImg = charData?.image || "https://via.placeholder.com/100";
     const creator = profile.username || "unknown";
-
     document.getElementById("char-name").textContent = charName;
     document.getElementById("char-img").src = charImg;
     document.getElementById("creator").textContent = `by ${creator}`;
@@ -416,70 +469,352 @@
     document.getElementById("sidebar-username").textContent = `@${creator}`;
     document.getElementById("sidebar-description").textContent = charData?.description || "No description provided.";
 
+    // --- DOM References ---
     const chatContainer = document.getElementById("chat-container");
     const form = document.getElementById("chat-form");
     const input = document.getElementById("user-input");
     let isMuted = false;
+    let lastReactionBox = null;
+    let currentChatId;
 
-    function createMessage(text, sender) {
+    // --- Toast Notification ---
+    function showToast(msg, timeout = 2000) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), timeout);
+    }
+
+    // --- Chat Session Management ---
+    function getAllChats() {
+      return JSON.parse(localStorage.getItem("chatSessions")) || {};
+    }
+    function saveAllChats(allChats) {
+      localStorage.setItem("chatSessions", JSON.stringify(allChats));
+    }
+    function getCharacterChatMap() {
+      return JSON.parse(localStorage.getItem("characterChatMap")) || {};
+    }
+    function saveCharacterChatMap(map) {
+      localStorage.setItem("characterChatMap", JSON.stringify(map));
+    }
+
+    // --- Recent Character Tracking ---
+    function updateRecentCharacters() {
+      if (characterKey) {
+        let recent = JSON.parse(localStorage.getItem("recentCharacters")) || [];
+        const existingIndex = recent.indexOf(characterKey);
+        if (existingIndex !== -1) recent.splice(existingIndex, 1);
+        recent.push(characterKey);
+        localStorage.setItem("recentCharacters", JSON.stringify(recent));
+      }
+    }
+    updateRecentCharacters();
+
+    // --- Chat Session Initialization ---
+    function initChatSession() {
+      let characterChatMap = getCharacterChatMap();
+      currentChatId = characterChatMap[characterKey];
+      if (!currentChatId) {
+        currentChatId = Date.now().toString();
+        characterChatMap[characterKey] = currentChatId;
+        saveCharacterChatMap(characterChatMap);
+      }
+      let allChats = getAllChats();
+      let chat = allChats[currentChatId];
+      if (!chat) {
+        chat = {
+          id: currentChatId,
+          character: characterKey,
+          name: charName,
+          creator: creator,
+          image: charImg,
+          messages: [],
+          lastUpdated: new Date().toISOString(),
+        };
+        allChats[currentChatId] = chat;
+        saveAllChats(allChats);
+      }
+      return chat;
+    }
+
+    // --- Chat Message Creation (with typing animation and reactions) ---
+    function createMessage(text, sender, skipSave = false) {
+      const isBot = sender === "bot";
       const msg = document.createElement("div");
       msg.className = `message ${sender}`;
-      msg.textContent = text;
       chatContainer.appendChild(msg);
-      msg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      let index = 0;
+      const typingSpeed = isBot ? 20 : 0;
+      function typeChar() {
+        if (index < text.length) {
+          msg.textContent += text.charAt(index);
+          index++;
+          setTimeout(typeChar, typingSpeed);
+        }
+      }
+      if (typingSpeed) typeChar(); else { msg.textContent = text; }
+      if (!skipSave) saveMessageToChat(text, sender);
+      if (lastReactionBox) lastReactionBox.remove();
+      if (isBot) {
+        const box = document.createElement("div");
+        box.className = "reactions";
+        box.innerHTML = '<span title="Like">👍</span><span title="Dislike">👎</span><span title="Play Audio">🔊</span>';
+        msg.appendChild(box);
+        lastReactionBox = msg;
+      }
+      setTimeout(() => {
+        const chatBox = document.getElementById("chat-box");
+        chatBox.scrollTop = chatBox.scrollHeight - 100;
+      }, 100);
+    }
 
-      if (sender === "bot") {
-        const react = document.createElement("div");
-        react.className = "reactions";
-        react.innerHTML = '<span>👍</span><span>👎</span><span>🔊</span>';
-        msg.appendChild(react);
+    function saveMessageToChat(text, sender) {
+      let allChats = getAllChats();
+      let chat = allChats[currentChatId];
+      if (!chat) return;
+      chat.messages.push({ text, sender, timestamp: Date.now() });
+      chat.lastUpdated = new Date().toISOString();
+      allChats[currentChatId] = chat;
+      saveAllChats(allChats);
+    }
+
+    // --- Load Chat History for Current Session ---
+    function loadChatHistory() {
+      chatContainer.innerHTML = "";
+      lastReactionBox = null;
+      let allChats = getAllChats();
+      let chat = allChats[currentChatId];
+      if (chat && chat.messages.length > 0) {
+        chat.messages.forEach(m => createMessage(m.text, m.sender, true));
+      } else {
+        createMessage(`Hey ${name}, welcome to the shadows...`, "bot");
       }
     }
 
+    // --- Form Submission ---
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       const userText = input.value.trim();
       if (!userText) return;
       createMessage(userText, "user");
       input.value = "";
-
       setTimeout(() => {
         createMessage(`That’s intriguing... Tell me more about "${userText}"`, "bot");
       }, 600);
     });
 
-    document.getElementById("sound-toggle").onclick = () => {
+    // --- Sound Toggle ---
+    document.getElementById("sound-toggle").addEventListener("click", () => {
       isMuted = !isMuted;
       document.getElementById("sound-toggle").textContent = isMuted ? "🔇" : "🔊";
-    };
+      showToast(isMuted ? "Sound muted." : "Sound on.");
+    });
 
+    // --- Sidebar Toggle ---
     const sidebar = document.getElementById("sidebar");
     const toggleBtn = document.getElementById("sidebar-toggle");
-    toggleBtn.onclick = () => {
+    toggleBtn.addEventListener("click", (e) => {
       sidebar.classList.toggle("open");
-    };
-
-    document.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+    document.addEventListener("mousedown", (e) => {
       if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
         sidebar.classList.remove("open");
       }
     });
+    function adjustSidebar() {
+      const header = document.querySelector("header");
+      const disclaimer = document.getElementById("disclaimer");
+      const headH = header.offsetHeight;
+      const discH = disclaimer.offsetHeight;
+      sidebar.style.top = headH + "px";
+      sidebar.style.height = `calc(100% - ${headH + discH}px)`;
+    }
+    window.addEventListener("resize", adjustSidebar);
+    window.addEventListener("DOMContentLoaded", adjustSidebar);
+    adjustSidebar();
 
+    // --- Theme Popup Modal ---
     const themeBtn = document.getElementById("theme-trigger");
     const themePopup = document.getElementById("theme-popup");
     const themeOverlay = document.getElementById("theme-overlay");
-
-    themeBtn.onclick = () => {
+    themeBtn.addEventListener("click", () => {
       themePopup.classList.add("active");
       themeOverlay.style.display = "block";
-    };
-
+      setTimeout(() => { themePopup.focus(); }, 10);
+    });
     themeOverlay.onclick = () => {
       themePopup.classList.remove("active");
       themeOverlay.style.display = "none";
     };
+    document.addEventListener("keydown", (e) => {
+      if ((themePopup.classList.contains("active") || themeOverlay.style.display === "block") && e.key === "Escape") {
+        themePopup.classList.remove("active");
+        themeOverlay.style.display = "none";
+      }
+    });
 
-    createMessage(`Hey ${name}, welcome to the shadows...`, "bot");
+    // --- Sidebar Links Functionality ---
+    document.getElementById("new-chat-btn").addEventListener("click", () => {
+      const newId = Date.now().toString();
+      let characterChatMap = getCharacterChatMap();
+      characterChatMap[characterKey] = newId;
+      saveCharacterChatMap(characterChatMap);
+      let allChats = getAllChats();
+      allChats[newId] = {
+        id: newId,
+        character: characterKey,
+        name: charName,
+        creator: creator,
+        image: charImg,
+        messages: [],
+        lastUpdated: new Date().toISOString(),
+      };
+      saveAllChats(allChats);
+      currentChatId = newId;
+      loadChatHistory();
+      showToast("Started a new chat.");
+      sidebar.classList.remove("open");
+    });
+    document.getElementById("history-btn").addEventListener("click", () => {
+      renderChatHistory();
+      showToast("History opened.");
+      sidebar.classList.remove("open");
+    });
+    document.getElementById("voice-btn").addEventListener("click", () => {
+      showToast("Voice mode coming soon.");
+      sidebar.classList.remove("open");
+    });
+    document.getElementById("customize-btn").addEventListener("click", () => {
+      if (characterKey) {
+        window.location.href = `create-character.html?from=roleplay1.html&name=${encodeURIComponent(characterKey)}`;
+      } else {
+        showToast("No character selected to customize.");
+      }
+    });
+
+    // --- Export Chat Functionality ---
+    document.getElementById("export-btn").addEventListener("click", () => {
+      let allChats = getAllChats();
+      let chat = allChats[currentChatId];
+      if (!chat) {
+        showToast("No current chat available to export.");
+        return;
+      }
+      const chatText = chat.messages.map(m => `${m.sender === "user" ? name : charName}: ${m.text}`).join("\n");
+      const blob = new Blob([chatText], { type: "text/plain" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${charName}_chat.txt`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      showToast("Chat exported!");
+      sidebar.classList.remove("open");
+    });
+
+    // --- Report Functionality (Simple Modal) ---
+    let reportModal = null;
+    let reportOverlay = null;
+    function closeReportModal() {
+      if (reportModal) reportModal.remove();
+      if (reportOverlay) reportOverlay.remove();
+      reportModal = null;
+      reportOverlay = null;
+    }
+    document.getElementById("report-btn").addEventListener("click", () => {
+      closeReportModal();
+      reportOverlay = document.createElement("div");
+      reportOverlay.style.cssText = "position:fixed;inset:0;background:#000a;z-index:150;";
+      reportModal = document.createElement("div");
+      reportModal.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(1);background:#181818;color:#ff0040;padding:22px 18px 18px 18px;border-radius:14px;box-shadow:0 0 20px #ff004055,0 2px 16px #000a;z-index:151;min-width:260px;max-width:96vw;";
+      reportModal.innerHTML = `
+        <h2 style="margin:0 0 12px 0;color:#fff;text-align:center;font-size:1.13em;">Report Character</h2>
+        <textarea id="report-reason" rows="3" style="width:100%;border-radius:8px;background:#222;color:#ff0040;border:none;padding:8px;margin-bottom:12px;font-family:inherit;font-size:1em;" placeholder="Describe the issue..."></textarea>
+        <br>
+        <button id="report-submit" style="background:#ff0040;color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:1em;cursor:pointer;box-shadow:0 1px 6px #0a0a0a33;">Submit</button>
+        <button id="report-cancel" style="margin-left:14px;background:#222;color:#ff0040;border:none;padding:8px 20px;border-radius:8px;font-size:1em;cursor:pointer;">Cancel</button>
+      `;
+      document.body.appendChild(reportOverlay);
+      document.body.appendChild(reportModal);
+      document.getElementById("report-reason").focus();
+      document.getElementById("report-cancel").onclick = closeReportModal;
+      reportOverlay.onclick = closeReportModal;
+      document.getElementById("report-submit").onclick = function() {
+        let reason = document.getElementById("report-reason").value.trim();
+        if (!reason) {
+          showToast("Please enter a reason.");
+          return;
+        }
+        closeReportModal();
+        showToast("Report submitted. Thank you!");
+        sidebar.classList.remove("open");
+        // Here you would send the report to server/Firestore etc.
+      };
+    });
+
+    // --- Like / Dislike Buttons in Sidebar ---
+    document.getElementById("like-btn").addEventListener("click", () => showToast("You liked this character!"));
+    document.getElementById("dislike-btn").addEventListener("click", () => showToast("You disliked this character!"));
+
+    // --- Message Reactions (Only on latest bot message) ---
+    chatContainer.addEventListener("click", (e) => {
+      if (!e.target.closest('.reactions span')) return;
+      // Only allow reactions on the last bot message
+      const msg = e.target.closest('.message.bot');
+      if (!msg || msg !== lastReactionBox) {
+        showToast("You can only react to the latest bot reply.");
+        return;
+      }
+      const type = e.target.textContent.trim();
+      if (type === "👍") showToast("You liked the reply!");
+      else if (type === "👎") showToast("You disliked the reply.");
+      else if (type === "🔊") {
+        if (isMuted) {
+          showToast("Sound is muted.");
+        } else {
+          if ('speechSynthesis' in window) {
+            const utter = new SpeechSynthesisUtterance(msg.textContent.replace(/👍|👎|🔊/g, ""));
+            utter.rate = 1;
+            utter.pitch = 1;
+            utter.lang = "en-US";
+            window.speechSynthesis.speak(utter);
+            showToast("Playing voice...");
+          } else {
+            showToast("TTS not supported.");
+          }
+        }
+      }
+    });
+
+    // --- Send Button Click (for accessibility) ---
+    document.getElementById("send-btn").addEventListener("click", function(e) {
+      e.preventDefault();
+      form.requestSubmit();
+    });
+
+    // --- Chat History Modal/Sidebar ---
+    function renderChatHistory() {
+      let allChats = getAllChats();
+      const chatsForChar = Object.values(allChats).filter(chat => chat.character === characterKey);
+      if (!chatsForChar.length) {
+        showToast("No chat history available for this character.");
+        return;
+      }
+      // Simple modal for now (can be improved to sidebar/modal as in roleplay.html)
+      let historyList = chatsForChar
+        .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))
+        .map(chat => `🕓 ${new Date(chat.lastUpdated).toLocaleString()} — ${chat.messages.length} msgs`)
+        .join("\n\n");
+      alert(`History:\n\n${historyList}`);
+    }
+
+    // --- On Load: Initialize Session and Load Chat ---
+    (function() {
+      initChatSession();
+      loadChatHistory();
+    })();
   </script>
 </body>
 </html>

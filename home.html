@@ -244,7 +244,7 @@
       }
 
       .control-link::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: 0;
         left: 0;
@@ -296,29 +296,29 @@
         background: transparent;
       }
 
-      .recent-chats-slider .recent-card {
-        width: 60px;
-        flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        cursor: pointer;
-      }
+.recent-chats-slider .recent-card {
+  width: 60px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
 
-      .recent-card img {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #00ffcc;
-      }
+.recent-card img {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #00ffcc;
+}
 
-      .recent-card span {
-        font-size: 0.7em;
-        margin-top: 6px;
-        text-align: center;
-        color: #00ffcc;
-      }
+.recent-card span {
+  font-size: 0.7em;
+  margin-top: 6px;
+  text-align: center;
+  color: #00ffcc;
+}
 
       .logout {
         color: #ff4d4d;
@@ -327,8 +327,7 @@
         padding: 12px 0;
         border-top: 1px solid #333;
         cursor: pointer;
-        transition: transform 0.3s ease, box-shadow 0.3s ease,
-          background-color 0.3s ease;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
       }
 
       .logout:hover {
@@ -336,7 +335,9 @@
         background-color: #220000;
         color: #ff0000;
         text-shadow: 0 0 10px #ff0000, 0 0 20px #990000, 0 0 30px #660000;
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.5),
+        box-shadow:
+          0 0 20px rgba(255, 0, 0, 0.8),
+          0 0 40px rgba(255, 0, 0, 0.5),
           inset 0 0 10px rgba(255, 0, 0, 0.3);
         animation: pulseFear 0.7s infinite alternate;
       }
@@ -394,15 +395,13 @@
       }
 
       .header-icons img[alt="Discord"]:hover {
-        box-shadow: 0 0 14px rgba(255, 255, 255, 0.7),
-          0 0 30px rgba(0, 153, 255, 0.4);
+        box-shadow: 0 0 14px rgba(255, 255, 255, 0.7), 0 0 30px rgba(0, 153, 255, 0.4);
         transform: scale(1.15) rotate(6deg);
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
       }
 
       .header-icons img[alt="Reddit"]:hover {
-        box-shadow: 0 0 14px rgba(255, 69, 0, 0.7),
-          0 0 30px rgba(255, 69, 0, 0.4);
+        box-shadow: 0 0 14px rgba(255, 69, 0, 0.7), 0 0 30px rgba(255, 69, 0, 0.4);
         transform: scale(1.15) rotate(-6deg);
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
       }
@@ -438,8 +437,7 @@
       .btn:hover {
         background-color: #00ffcc;
         color: #121212;
-        box-shadow: 0 0 16px rgba(0, 255, 204, 0.6),
-          0 0 30px rgba(0, 255, 204, 0.3);
+        box-shadow: 0 0 16px rgba(0, 255, 204, 0.6), 0 0 30px rgba(0, 255, 204, 0.3);
         transform: scale(1.08) rotate(-1deg);
         transition: all 0.35s ease-in-out;
       }
@@ -652,6 +650,27 @@
         color: #121212;
       }
     </style>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+      import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+      import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDCqMMR1AIjyq4ZGWdhyBGqBHZ71mB4dSU",
+        authDomain: "trendai-ee9be.firebaseapp.com",
+        projectId: "trendai-ee9be",
+        storageBucket: "trendai-ee9be.appspot.com",
+        messagingSenderId: "103138637846",
+        appId: "1:103138637846:web:6d3a8e227eaef1b0c31d37"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const storage = getStorage(app);
+
+      window.firebaseDB = db;
+      window.firebaseStorage = storage;
+    </script>
   </head>
   <body>
     <button id="hamburger" onclick="toggleSidebar()">
@@ -671,9 +690,11 @@
         <a href="characters.html" class="control-link"
           ><i class="fas fa-masks-theater"></i> Characters</a
         >
-        <a href="#">💬 Recent Chats</a>
-        <div class="recent-chats-slider" id="recentChatsSlider">
-          <!-- Character cards will appear here -->
+        <div style="margin-top: 20px;">
+          <p style="color: #00ffcc; font-weight: bold;">Recent Chats</p>
+          <div id="recentChatsSidebar" style="margin-top: 10px; max-height: 280px; overflow-y: auto;">
+            <!-- Character links will be injected here -->
+          </div>
         </div>
       </div>
       <div class="logout" onclick="alert('Logged out!')">🚪 Logout</div>
@@ -697,7 +718,7 @@
           />
           <div id="searchResults" class="search-dropdown"></div>
         </div>
-        <a href="https://discord.com/your-link" target="_blank">
+        <a href="https://discord.gg/TK9swEQb" target="_blank">
           <img src="assets/icons/discord.webp" alt="Discord" />
         </a>
         <a href="https://reddit.com/your-link" target="_blank">
@@ -733,14 +754,16 @@
 
     <footer>
       <div>
-        <a href="about.html">About</a> •
-        <a href="characters.html">Characters</a> • <a href="#">Careers</a> •
+        <a href="about.html">About</a> • 
+        <a href="characters.html">Characters</a> •
+        <a href="#">Careers</a> •
         <a href="#">Safety Center</a>
       </div>
       <div>
-        <a href="#">Blog</a> • <a href="#">Research</a> •
-        <a href="cookie_policy.html">Cookie Policy</a> •
-        <a href="privacy_policy.html">Privacy Policy</a> •
+        <a href="#">Blog</a> • 
+        <a href="#">Research</a> •
+        <a href="cookie_policy.html">Cookie Policy</a> • 
+        <a href="privacy_policy.html">Privacy Policy</a> • 
         <a href="terms_of_service.html">Terms of Service</a>
       </div>
     </footer>
@@ -748,7 +771,7 @@
     <script>
       // Codex modal logic
       // Find the "The Codex" link and attach click event
-      (function () {
+      (function() {
         // Polyfill for :contains selector
         function findCodexLink() {
           const links = document.querySelectorAll('a[href="#"]');
@@ -769,7 +792,7 @@
             document.getElementById("codexOverlay").style.display = "block";
             document.getElementById("codexPopup").style.display = "flex";
             document.getElementById("codexPopup").classList.add("show");
-            showCodexSection("account");
+            showCodexSection('account');
           });
         }
       })();
@@ -858,21 +881,19 @@
         const characters = JSON.parse(localStorage.getItem("characters")) || [];
         const character = characters[index];
         const nameParam = encodeURIComponent(character.name);
-        const redirectURL = `create-character.html?name=${nameParam}&from=login.html`;
+        const redirectURL = `create-character.html?name=${nameParam}&from=home.html`;
         window.location.href = redirectURL;
       }
       function confirmDelete(index) {
         if (confirm("Are you sure you want to delete this character?")) {
-          const characters =
-            JSON.parse(localStorage.getItem("characters")) || [];
+          const characters = JSON.parse(localStorage.getItem("characters")) || [];
           const characterToDelete = characters[index];
           characters.splice(index, 1);
           localStorage.setItem("characters", JSON.stringify(characters));
 
           // Remove from recentCharacters if present
-          let recent =
-            JSON.parse(localStorage.getItem("recentCharacters")) || [];
-          recent = recent.filter((name) => name !== characterToDelete.name);
+          let recent = JSON.parse(localStorage.getItem("recentCharacters")) || [];
+          recent = recent.filter(name => name !== characterToDelete.name);
           localStorage.setItem("recentCharacters", JSON.stringify(recent));
 
           location.reload();
@@ -930,6 +951,7 @@
           slider.appendChild(card);
         });
       }
+      
 
       function getStoredUsername() {
         try {
@@ -1008,33 +1030,36 @@
         document.getElementById("searchResults").style.display = "none";
       }
 
-      document.addEventListener("click", function (event) {
-        const sidebar = document.getElementById("sidebar");
-        const isSidebarOpen = sidebar?.classList.contains("open");
-        if (
-          isSidebarOpen &&
-          !sidebar.contains(event.target) &&
-          !event.target.closest("#hamburger")
-        ) {
-          toggleSidebar();
-        }
+document.addEventListener("click", function (event) {
+  const sidebar = document.getElementById("sidebar");
+  const isSidebarOpen = sidebar?.classList.contains("open");
+  if (
+    isSidebarOpen &&
+    !sidebar.contains(event.target) &&
+    !event.target.closest("#hamburger")
+  ) {
+    toggleSidebar();
+  }
 
-        document.querySelectorAll(".action-menu").forEach((menu) => {
-          if (
-            !menu.contains(event.target) &&
-            !event.target.classList.contains("menu-icon")
-          ) {
-            menu.style.display = "none";
-          }
-        });
+  document.querySelectorAll(".action-menu").forEach((menu) => {
+    if (
+      !menu.contains(event.target) &&
+      !event.target.classList.contains("menu-icon")
+    ) {
+      menu.style.display = "none";
+    }
+  });
 
-        // Close search results when clicking outside
-        const searchContainer = document.querySelector(".search-container");
-        const searchResults = document.getElementById("searchResults");
-        if (searchResults && !searchContainer.contains(event.target)) {
-          searchResults.style.display = "none";
-        }
-      });
+  // Close search results when clicking outside
+  const searchContainer = document.querySelector(".search-container");
+  const searchResults = document.getElementById("searchResults");
+  if (
+    searchResults &&
+    !searchContainer.contains(event.target)
+  ) {
+    searchResults.style.display = "none";
+  }
+});
 
       window.onload = loadCharacters;
       function loadRecentChats() {
@@ -1042,49 +1067,83 @@
         if (!container) return;
 
         container.innerHTML = "";
-        const recentCharacters =
-          JSON.parse(localStorage.getItem("recentCharacters")) || [];
-        const allCharacters =
-          JSON.parse(localStorage.getItem("characters")) || [];
+        const recentCharacters = JSON.parse(localStorage.getItem("recentCharacters")) || [];
+        const allCharacters = JSON.parse(localStorage.getItem("characters")) || [];
 
-        recentCharacters
-          .slice()
-          .reverse()
-          .forEach((name) => {
-            const c = allCharacters.find((char) => char.name === name);
-            if (!c) return;
+        recentCharacters.slice().reverse().forEach(name => {
+          const c = allCharacters.find(char => char.name === name);
+          if (!c) return;
 
-            const card = document.createElement("div");
-            card.className = "recent-card";
-            card.onclick = () => {
-              let recent =
-                JSON.parse(localStorage.getItem("recentCharacters")) || [];
-              const existingIndex = recent.indexOf(c.name);
-              if (existingIndex !== -1) recent.splice(existingIndex, 1);
-              recent.push(c.name); // Most recently clicked goes to end
-              localStorage.setItem("recentCharacters", JSON.stringify(recent));
-              localStorage.setItem("roleplayCharacter", c.name);
-              window.location.href = "roleplay.html";
-            };
+          const card = document.createElement("div");
+          card.className = "recent-card";
+          card.onclick = () => {
+            let recent = JSON.parse(localStorage.getItem("recentCharacters")) || [];
+            const existingIndex = recent.indexOf(c.name);
+            if (existingIndex !== -1) recent.splice(existingIndex, 1);
+            recent.push(c.name); // Most recently clicked goes to end
+            localStorage.setItem("recentCharacters", JSON.stringify(recent));
+            localStorage.setItem("roleplayCharacter", c.name);
+            window.location.href = "roleplay.html";
+          };
 
-            card.innerHTML = `
-            <img src="${c.image || "assets/placeholder-avatar.png"}" alt="${
-              c.name
-            }">
+          card.innerHTML = `
+            <img src="${c.image || 'assets/placeholder-avatar.png'}" alt="${c.name}">
             <span>${c.name}</span>
           `;
-            container.appendChild(card);
-          });
+          container.appendChild(card);
+        });
       }
 
-      window.onload = () => {
-        loadCharacters();
-        loadRecentChats();
-      };
+function loadSidebarRecentChats() {
+  const container = document.getElementById("recentChatsSidebar");
+  if (!container) return;
+
+  container.innerHTML = "";
+  const recentCharacters = JSON.parse(localStorage.getItem("recentCharacters")) || [];
+  const allCharacters = JSON.parse(localStorage.getItem("characters")) || [];
+
+  // Show characters in reverse order (most recent on top)
+  recentCharacters.slice().reverse().forEach(name => {
+    const c = allCharacters.find(char => char.name === name);
+    if (!c) return;
+
+    const entry = document.createElement("div");
+    entry.textContent = c.name;
+    entry.style.padding = "8px 12px";
+    entry.style.borderBottom = "1px solid #00ffcc22";
+    entry.style.color = "#e0e0e0";
+    entry.style.cursor = "pointer";
+    entry.style.transition = "background 0.2s ease";
+    entry.addEventListener("click", () => {
+      let recent = JSON.parse(localStorage.getItem("recentCharacters")) || [];
+      const existingIndex = recent.indexOf(c.name);
+      if (existingIndex !== -1) recent.splice(existingIndex, 1);
+      recent.push(c.name); // Most recently clicked goes to end
+      localStorage.setItem("recentCharacters", JSON.stringify(recent));
+      localStorage.setItem("roleplayCharacter", c.name);
+      window.location.href = "roleplay.html";
+    });
+    entry.addEventListener("mouseover", () => {
+      entry.style.backgroundColor = "#00ffcc22";
+    });
+    entry.addEventListener("mouseout", () => {
+      entry.style.backgroundColor = "transparent";
+    });
+
+    container.appendChild(entry);
+  });
+}
+
+
+window.onload = () => {
+  loadCharacters();
+  loadRecentChats();
+  loadSidebarRecentChats();
+};
       localStorage.removeItem("editCharacterIndex");
     </script>
-    <div class="codex-overlay" id="codexOverlay" style="display: none"></div>
-    <div class="codex-popup" id="codexPopup" style="display: none">
+    <div class="codex-overlay" id="codexOverlay" style="display: none;"></div>
+    <div class="codex-popup" id="codexPopup" style="display: none;">
       <div class="codex-left">
         <button onclick="showCodexSection('account')">Account</button>
         <button onclick="showCodexSection('preferences')">Preferences</button>

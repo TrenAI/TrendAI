@@ -381,7 +381,7 @@ if (nameFromURL) {
        localStorage.setItem("characters", JSON.stringify(characters));
 localStorage.setItem("roleplayCharacter", name);  // ✅ Set the character key for roleplay
 const redirectURL =
-  localStorage.getItem("redirectAfterEdit") || "login.html";
+  localStorage.getItem("redirectAfterEdit") || "home.html";
 localStorage.removeItem("redirectAfterEdit");
 window.location.href = redirectURL;
       }
