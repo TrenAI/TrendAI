@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TrendAI Roleplay — Fantasy Theme</title>
+  <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Uncial Antiqua', cursive;
+      background: linear-gradient(135deg, #1d0e2f, #331a44);
+      color: #f5e9ff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(48, 24, 78, 0.8);
+      border-bottom: 1px solid #b783ff77;
+      box-shadow: 0 4px 12px rgba(128, 84, 222, 0.3);
+      backdrop-filter: blur(8px);
+      z-index: 2;
+    }
+
+    .character-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .character-info img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 3px solid #c793ff;
+      box-shadow: 0 0 8px #b96bff;
+    }
+
+    .character-meta span:first-child {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #fdd6ff;
+    }
+
+    .character-meta span:last-child {
+      font-size: 0.75em;
+      color: #d5a4ff;
+    }
+
+    .header-actions button {
+      background: none;
+      border: none;
+      font-size: 1.4em;
+      cursor: pointer;
+      color: #fdd6ff;
+      transition: transform 0.2s ease;
+    }
+
+    .header-actions button:hover {
+      transform: scale(1.2);
+    }
+
+    #chat-box {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+    }
+
+    #chat-container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 0 12px;
+    }
+
+    .message {
+      padding: 14px 20px;
+      border-radius: 20px;
+      line-height: 1.6;
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: linear-gradient(to right, #d188ff, #9f59e0);
+      color: #260b3f;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background: #3e205d;
+      color: #f0e0ff;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reactions {
+      font-size: 0.85em;
+      color: #dbb5ff;
+      margin-top: 6px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .reactions span {
+      cursor: pointer;
+    }
+
+    #chat-form {
+      display: flex;
+      justify-content: center;
+      padding: 14px 20px;
+      background-color: rgba(48, 24, 78, 0.9);
+      border-top: 1px solid #b783ff55;
+      backdrop-filter: blur(8px);
+    }
+
+    .input-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    #user-input {
+      width: 100%;
+      padding: 14px 48px 14px 16px;
+      border-radius: 24px;
+      background: #4f2d6d;
+      border: none;
+      color: #fce6ff;
+      font-size: 1em;
+    }
+
+    #user-input:focus {
+      outline: none;
+      box-shadow: 0 0 12px #c38bff99;
+    }
+
+    #send-btn {
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      background: #d188ff;
+      color: #330a54;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #disclaimer {
+      text-align: center;
+      font-size: 0.7em;
+      color: #cea4ff;
+      padding: 8px;
+      background-color: #1a0c2c;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      height: 100%;
+      background-color: #2b1450;
+      border-left: 1px solid #9c5eff44;
+      padding: 20px;
+      transition: right 0.3s ease-in-out;
+      z-index: 3;
+      backdrop-filter: blur(6px);
+      color: #fceaff;
+    }
+
+    #sidebar.open {
+      right: 0;
+    }
+
+    .sidebar-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .sidebar-top img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      border: 2px solid #d188ff;
+    }
+
+    .meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta .name {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #fdd6ff;
+    }
+
+    .meta .username {
+      font-size: 0.9em;
+      color: #bda3ff;
+    }
+
+    .sidebar-actions {
+      margin: 16px 0;
+      display: flex;
+      gap: 12px 16px;
+      flex-wrap: wrap;
+    }
+
+    .sidebar-actions button {
+      background: none;
+      border: none;
+      color: #e0b4ff;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    .description {
+      font-size: 0.9em;
+      color: #e8ccff;
+      margin-top: 10px;
+    }
+
+    .divider {
+      border-top: 1px solid #caaaff44;
+      margin: 16px 0;
+    }
+
+    .sidebar-links button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background: #43225e;
+      color: #fdd6ff;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .sidebar-links button:hover {
+      background-color: #c38bff22;
+    }
+
+    /* Theme Popup */
+    #theme-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      z-index: 10;
+      display: none;
+    }
+
+    #theme-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background-color: #2b1450;
+      color: #fceaff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #c38bff55;
+      z-index: 11;
+      display: none;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      width: 280px;
+    }
+
+    #theme-popup.active {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    #theme-popup h2 {
+      text-align: center;
+      margin-bottom: 16px;
+      font-size: 1.2em;
+      color: #ffffff;
+    }
+
+    .theme-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .theme-btn {
+      flex: 1 1 calc(50% - 10px);
+      padding: 10px;
+      border: none;
+      background: #3e2465;
+      color: #fdd6ff;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .theme-btn:hover {
+      background: #c38bff33;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="character-info">
+      <img id="char-img" src="" alt="Character" />
+      <div class="character-meta">
+        <span id="char-name">Character</span>
+        <span id="creator">by Creator</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="sound-toggle">🔊</button>
+      <button id="sidebar-toggle">⋯</button>
+    </div>
+  </header>
+
+  <div id="sidebar">
+    <div class="sidebar-top">
+      <img id="sidebar-img" src="https://via.placeholder.com/100" alt="Character" />
+      <div class="meta">
+        <div class="name" id="sidebar-char-name">Character</div>
+        <div class="username" id="sidebar-username">@username</div>
+      </div>
+    </div>
+    <div class="sidebar-actions">
+      <button title="Export">📤</button>
+      <button title="Like">👍</button>
+      <button title="Dislike">👎</button>
+      <button title="Report">⚠️</button>
+      <button title="More">⋯</button>
+    </div>
+    <div class="description" id="sidebar-description">A magical character wandering through dimensions...</div>
+    <div class="divider"></div>
+    <div class="sidebar-links">
+      <button><i class="fas fa-comments"></i> New Chat</button>
+      <button>🎤 Voice</button>
+      <button>🕓 History</button>
+      <button>🛠️ Customize</button>
+      <button id="theme-trigger">🎨 Themes</button>
+    </div>
+  </div>
+
+  <div id="chat-box">
+    <div id="chat-container"></div>
+  </div>
+
+  <form id="chat-form">
+    <div class="input-wrapper">
+      <input type="text" id="user-input" placeholder="Speak your spell..." autocomplete="off" required />
+      <button type="submit" id="send-btn">✨</button>
+    </div>
+  </form>
+
+  <div id="disclaimer">🧝 This is a fantasy AI — responses are for magical storytelling only.</div>
+
+  <div id="theme-overlay"></div>
+  <div id="theme-popup">
+    <h2>Choose a Theme</h2>
+    <div class="theme-options">
+      <button class="theme-btn" onclick="location.href='roleplay1.html'">🌑 Dark</button>
+      <button class="theme-btn" onclick="location.href='roleplay2.html'">💖 Romantic</button>
+      <button class="theme-btn" onclick="location.href='roleplay3.html'">😢 Emotional</button>
+      <button class="theme-btn" onclick="location.href='roleplay4.html'">🎉 Fun</button>
+      <button class="theme-btn" onclick="location.href='roleplay6.html'">🌸 Soft Pastel</button>
+      <button class="theme-btn" onclick="location.href='roleplay.html'">🚀 Futuristic</button>
+      <button class="theme-btn" onclick="location.href='roleplay7.html'">🧙 Fantasy</button>
+      <button class="theme-btn" onclick="location.href='roleplay8.html'">🎮 Retro</button>
+    </div>
+  </div>
+
+  <script>
+    const characterKey = localStorage.getItem("roleplayCharacter");
+    const characters = JSON.parse(localStorage.getItem("characters")) || [];
+    const profile = JSON.parse(localStorage.getItem("userProfile")) || { username: "mystic" };
+    const charData = characters.find(c => c.name === characterKey);
+    const name = profile.displayName || "You";
+    const charName = charData?.name || "Enchanted Soul";
+    const charImg = charData?.image || "https://via.placeholder.com/100";
+    const creator = profile.username || "unknown";
+
+    document.getElementById("char-name").textContent = charName;
+    document.getElementById("char-img").src = charImg;
+    document.getElementById("creator").textContent = `by ${creator}`;
+    document.getElementById("sidebar-char-name").textContent = charName;
+    document.getElementById("sidebar-img").src = charImg;
+    document.getElementById("sidebar-username").textContent = `@${creator}`;
+    document.getElementById("sidebar-description").textContent = charData?.description || "No description provided.";
+
+    const chatContainer = document.getElementById("chat-container");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("user-input");
+    let isMuted = false;
+
+    function createMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chatContainer.appendChild(msg);
+      msg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+      if (sender === "bot") {
+        const react = document.createElement("div");
+        react.className = "reactions";
+        react.innerHTML = '<span>🧡</span><span>👎</span><span>🔊</span>';
+        msg.appendChild(react);
+      }
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const userText = input.value.trim();
+      if (!userText) return;
+      createMessage(userText, "user");
+      input.value = "";
+
+      setTimeout(() => {
+        createMessage(`🔮 "${userText}" echoes through the realms...`, "bot");
+      }, 600);
+    });
+
+    document.getElementById("sound-toggle").onclick = () => {
+      isMuted = !isMuted;
+      document.getElementById("sound-toggle").textContent = isMuted ? "🔇" : "🔊";
+    };
+
+    const sidebar = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("sidebar-toggle");
+    toggleBtn.onclick = () => {
+      sidebar.classList.toggle("open");
+    };
+
+    document.addEventListener("click", (e) => {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove("open");
+      }
+    });
+
+    const themeBtn = document.getElementById("theme-trigger");
+    const themePopup = document.getElementById("theme-popup");
+    const themeOverlay = document.getElementById("theme-overlay");
+
+    themeBtn.addEventListener("click", () => {
+      themePopup.classList.add("active");
+      themeOverlay.style.display = "block";
+    });
+
+    themeOverlay.addEventListener("click", () => {
+      themePopup.classList.remove("active");
+      themeOverlay.style.display = "none";
+    });
+
+    createMessage(`🌙 Welcome, ${name}. Your fantasy tale begins...`, "bot");
+  </script>
+</body>
+</html>

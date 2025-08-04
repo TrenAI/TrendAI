@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TrendAI | Romantic Roleplay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&family=Satisfy&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #2d1e2f, #5e375c);
+      color: #f5e4f0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px 24px;
+      border-bottom: 1px solid #aa7ea5;
+      box-shadow: 0 2px 10px rgba(173, 121, 162, 0.15);
+      z-index: 2;
+    }
+
+    .character-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .character-info img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #d287bd;
+    }
+
+    .character-meta {
+      display: flex;
+      flex-direction: column;
+      font-family: 'Satisfy', cursive;
+    }
+
+    .character-meta span:first-child {
+      font-size: 1.3em;
+      color: #f9c6eb;
+    }
+
+    .character-meta span:last-child {
+      font-size: 0.75em;
+      color: #cfa7d9;
+    }
+
+    .header-actions button {
+      background: none;
+      border: none;
+      color: #f9c6eb;
+      font-size: 1.4em;
+      cursor: pointer;
+    }
+
+    #chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #chat-container {
+      max-width: 800px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .message {
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 1em;
+      line-height: 1.6;
+      position: relative;
+      max-width: 90%;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: linear-gradient(to right, #cc87b3, #ba6aa3);
+      color: #fff;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid #aa7ea577;
+      color: #f5e4f0;
+    }
+
+    .reactions {
+      font-size: 0.85em;
+      margin-top: 6px;
+      display: flex;
+      gap: 10px;
+      color: #ffb2dc;
+    }
+
+    .reactions span { cursor: pointer; }
+
+    #chat-form {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .input-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    #user-input {
+      width: 100%;
+      padding: 12px 44px 12px 16px;
+      border-radius: 30px;
+      background: #4e3d50;
+      border: none;
+      color: #ffeaf6;
+      font-size: 1em;
+    }
+
+    #user-input:focus {
+      outline: none;
+      box-shadow: 0 0 10px #ffb2dc77;
+    }
+
+    #send-btn {
+      position: absolute;
+      top: 50%;
+      right: 6px;
+      transform: translateY(-50%);
+      background: #d287bd;
+      color: #fff;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      border: none;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    #disclaimer {
+      text-align: center;
+      font-size: 0.75em;
+      color: #aa7ea5;
+      padding: 10px;
+    }
+
+    #sidebar {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      height: 100%;
+      background: #3c2c3e;
+      border-left: 1px solid #aa7ea5;
+      padding: 20px;
+      transition: right 0.3s ease-in-out;
+      z-index: 3;
+    }
+
+    #sidebar.open { right: 0; }
+
+    .sidebar-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .sidebar-top img {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      border: 2px solid #d287bd;
+    }
+
+    .meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta .name {
+      font-weight: bold;
+      color: #f9c6eb;
+    }
+
+    .meta .username {
+      font-size: 0.9em;
+      color: #cfa7d9;
+    }
+
+    .sidebar-actions {
+      margin: 16px 0;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .sidebar-actions button {
+      background: none;
+      border: none;
+      color: #f5e4f0;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    .description {
+      font-size: 0.9em;
+      color: #ddc3de;
+    }
+
+    .divider {
+      border-top: 1px solid #aa7ea5;
+      margin: 16px 0;
+    }
+
+    .sidebar-links button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background: #5c4460;
+      color: #f9c6eb;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .sidebar-links button:hover {
+      background: #a46393;
+    }
+
+    /* Theme Popup */
+    #theme-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+      z-index: 10;
+      display: none;
+    }
+
+    #theme-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: #3c2c3e;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 0 12px #a46d9c;
+      z-index: 11;
+      display: none;
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      width: 280px;
+    }
+
+    #theme-popup.active {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    #theme-popup h2 {
+      text-align: center;
+      margin-bottom: 16px;
+      color: #f9c6eb;
+      font-family: 'Satisfy', cursive;
+    }
+
+    .theme-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .theme-btn {
+      flex: 1 1 calc(50% - 10px);
+      padding: 10px;
+      border: none;
+      background: #5c4460;
+      color: #f9c6eb;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .theme-btn:hover {
+      background: #a46d9c;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="character-info">
+      <img id="char-img" src="" alt="Character" />
+      <div class="character-meta">
+        <span id="char-name">Character</span>
+        <span id="creator">by Creator</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="sound-toggle">🔊</button>
+      <button id="sidebar-toggle">⋯</button>
+    </div>
+  </header>
+
+  <div id="sidebar">
+    <div class="sidebar-top">
+      <img id="sidebar-img" src="https://via.placeholder.com/100" alt="Character" />
+      <div class="meta">
+        <div class="name" id="sidebar-char-name">Character</div>
+        <div class="username" id="sidebar-username">@username</div>
+      </div>
+    </div>
+    <div class="sidebar-actions">
+      <button>📤</button><button>💖</button><button>💔</button>
+      <button>⚠️</button><button>⋯</button>
+    </div>
+    <div class="description" id="sidebar-description">This character is thoughtful, warm, and perfect for romantic dialogues...</div>
+    <div class="divider"></div>
+    <div class="sidebar-links">
+      <button><i class="fas fa-comments"></i> New Chat</button>
+      <button>🎤 Voice</button>
+      <button>🕓 History</button>
+      <button>🛠️ Customize</button>
+      <button id="theme-trigger">🎨 Themes</button>
+    </div>
+  </div>
+
+  <div id="chat-box"><div id="chat-container"></div></div>
+
+  <form id="chat-form">
+    <div class="input-wrapper">
+      <input type="text" id="user-input" placeholder="Whisper your thoughts..." autocomplete="off" required />
+      <button type="submit" id="send-btn">💌</button>
+    </div>
+  </form>
+
+  <div id="disclaimer">These romantic exchanges are powered by AI. Please enjoy with an open heart. 💗</div>
+
+  <div id="theme-overlay"></div>
+  <div id="theme-popup">
+    <h2>Select a Mood</h2>
+    <div class="theme-options">
+      <button class="theme-btn" onclick="window.location.href='roleplay1.html'">🌑 Dark</button>
+      <button class="theme-btn" onclick="window.location.href='roleplay2.html'">💖 Romantic</button>
+       <button class="theme-btn" onclick="window.location.href='roleplay3.html'">😢 Emotional</button>
+       <button class="theme-btn" onclick="window.location.href='roleplay4.html'">🎉 Fun</button>
+       <button class="theme-btn" onclick="window.location.href='roleplay6.html'"> 🌸 Soft Pastel </button>
+      <button class="theme-btn" onclick="window.location.href='roleplay.html'">🚀 Futuristic</button>
+       <button class="theme-btn" onclick="window.location.href='roleplay7.html'"> 🧙 Fantasy </button>
+       <button class="theme-btn" onclick="window.location.href='roleplay8.html'"> 🎮 Retro</button>
+    </div>
+  </div>
+
+  <script>
+    const characterKey = localStorage.getItem("roleplayCharacter");
+    const characters = JSON.parse(localStorage.getItem("characters")) || [];
+    const profile = JSON.parse(localStorage.getItem("userProfile")) || { username: "unknown" };
+    const charData = characters.find(c => c.name === characterKey);
+
+    const name = profile.displayName || "You";
+    const charName = charData?.name || "AI";
+    const charImg = charData?.image || "https://via.placeholder.com/100";
+    const creator = profile.username || "unknown";
+
+    document.getElementById("char-name").textContent = charName;
+    document.getElementById("char-img").src = charImg;
+    document.getElementById("creator").textContent = `by ${creator}`;
+    document.getElementById("sidebar-char-name").textContent = charName;
+    document.getElementById("sidebar-img").src = charImg;
+    document.getElementById("sidebar-username").textContent = `@${creator}`;
+    document.getElementById("sidebar-description").textContent = charData?.description || "No description provided.";
+
+    const chatContainer = document.getElementById("chat-container");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("user-input");
+    let isMuted = false;
+
+    function createMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chatContainer.appendChild(msg);
+      msg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+      if (sender === "bot") {
+        const react = document.createElement("div");
+        react.className = "reactions";
+        react.innerHTML = '<span>💖</span><span>💔</span><span>🔊</span>';
+        msg.appendChild(react);
+      }
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const userText = input.value.trim();
+      if (!userText) return;
+      createMessage(userText, "user");
+      input.value = "";
+
+      setTimeout(() => {
+        createMessage(`💞 Oh... that's so beautiful. Tell me more about "${userText}"...`, "bot");
+      }, 700);
+    });
+
+    document.getElementById("sound-toggle").onclick = () => {
+      isMuted = !isMuted;
+      document.getElementById("sound-toggle").textContent = isMuted ? "🔇" : "🔊";
+    };
+
+    const sidebar = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("sidebar-toggle");
+
+    toggleBtn.onclick = () => {
+      sidebar.classList.toggle("open");
+    };
+
+    document.addEventListener("click", (e) => {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove("open");
+      }
+    });
+
+    // Theme Popup
+    const themeBtn = document.getElementById("theme-trigger");
+    const themePopup = document.getElementById("theme-popup");
+    const themeOverlay = document.getElementById("theme-overlay");
+
+    themeBtn.addEventListener("click", () => {
+      themePopup.classList.add("active");
+      themeOverlay.style.display = "block";
+    });
+
+    themeOverlay.addEventListener("click", () => {
+      themePopup.classList.remove("active");
+      themeOverlay.style.display = "none";
+    });
+
+    createMessage(`Hey ${name}, shall we begin our love story? 💗`, "bot");
+  </script>
+</body>
+</html>

@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TrendAI Roleplay</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Orbitron", sans-serif;
+        background-color: #0e0e0e;
+        color: #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background-color: #121212;
+        border-bottom: 1px solid #00ffcc33;
+        z-index: 2;
+      }
+
+      .character-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .character-info img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid #00ffcc;
+      }
+
+      .character-meta {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .character-meta span:first-child {
+        font-weight: bold;
+        color: #00ffcc;
+      }
+
+      .character-meta span:last-child {
+        font-size: 0.75em;
+        color: #aaa;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header-actions button {
+        background: none;
+        border: none;
+        color: #00ffcc;
+        font-size: 1.2em;
+        cursor: pointer;
+      }
+
+      #chat-box {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+      }
+
+      #chat-container {
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0 10px;
+      }
+
+      .message {
+        padding: 12px 16px;
+        border-radius: 14px;
+        line-height: 1.5;
+        display: inline-block;
+        max-width: 100%;
+      }
+
+      .user {
+        align-self: flex-end;
+        background: linear-gradient(135deg, #00ffcc, #00bfa6);
+        color: #121212;
+      }
+
+      .bot {
+        align-self: flex-start;
+        background: #222;
+      }
+
+      .reaction-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 6px;
+        margin-left: 6px;
+        align-self: flex-start;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .reaction-buttons button {
+        background: none;
+        border: 1px solid #00ffcc66;
+        color: #00ffcc;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background 0.3s, color 0.3s;
+      }
+
+      .reaction-buttons button.active {
+        background: #00ffcc;
+        color: #121212;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #chat-form {
+        display: flex;
+        justify-content: center;
+        padding: 10px 20px;
+        background-color: #121212;
+      }
+
+      .input-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+      }
+
+      #user-input {
+        width: 100%;
+        padding: 12px 44px 12px 14px;
+        border-radius: 20px;
+        background: #2b2b2b;
+        border: none;
+        color: #00ffcc;
+        font-size: 1em;
+      }
+
+      #user-input:focus {
+        outline: none;
+        box-shadow: 0 0 10px #00ffcc88;
+      }
+
+      #send-btn {
+        position: absolute;
+        top: 50%;
+        right: 6px;
+        transform: translateY(-50%);
+        background: #00ffcc;
+        color: #121212;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #disclaimer {
+        text-align: center;
+        font-size: 0.75em;
+        color: #999;
+        padding: 10px;
+        background-color: #0e0e0e;
+      }
+
+      #sidebar {
+        position: fixed;
+        top: 0;
+        right: -320px;
+        width: 300px;
+        height: 100%;
+        background-color: #181818;
+        border-left: 1px solid #00ffcc33;
+        padding: 20px;
+        transition: right 0.3s ease-in-out;
+        z-index: 3;
+      }
+
+      #sidebar.open {
+        right: 0;
+      }
+
+      .sidebar-top {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .sidebar-top img {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        border: 2px solid #00ffcc;
+      }
+
+      .meta {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .meta .name {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #00ffcc;
+      }
+
+      .meta .username {
+        font-size: 0.9em;
+        color: #aaa;
+      }
+
+      .sidebar-actions {
+        display: flex;
+        /* flex-wrap: wrap; */
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .sidebar-actions button {
+        /* flex: 1 1 auto; */
+        padding: 8px;
+        font-size: 1.2em;
+        background: #292929;
+        border: none;
+        color: #00ffcc;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .sidebar-actions button:hover {
+        background: #00ffcc22;
+      }
+
+      .sidebar-divider {
+        height: 1px;
+        background-color: #00ffcc33;
+        margin: 16px 0;
+      }
+
+      .sidebar-links button {
+        background: #292929;
+        border: none;
+        color: #ccc;
+        font-size: 1em;
+        padding: 10px;
+        margin-top: 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+      }
+
+      .sidebar-links button:hover {
+        background-color: #00ffcc22;
+      }
+
+      #theme-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 10;
+        display: none;
+      }
+
+      #theme-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background-color: #1c1c1c;
+        color: #00ffcc;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+        z-index: 11;
+        display: none;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        opacity: 0;
+        width: 420px;
+      }
+
+      #theme-popup.active {
+        display: block;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      #theme-popup h2 {
+        text-align: center;
+        margin-bottom: 16px;
+        font-size: 1.3em;
+        color: #ffffff;
+      }
+
+      .theme-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .theme-btn {
+        width: 47%;
+        padding: 12px;
+        border: none;
+        background: #2a2a2a;
+        color: #00ffcc;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .theme-btn:hover {
+        background: #00ffcc33;
+      }
+
+      /* === Report Popup Styles === */
+      #report-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(3px);
+        z-index: 20;
+        display: none;
+      }
+
+      #report-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background-color: #1c1c1c;
+        color: #00ffcc;
+        padding: 20px;
+        border-radius: 12px;
+        width: 340px;
+        max-width: 90%;
+        box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+        z-index: 21;
+        display: none;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        opacity: 0;
+      }
+
+      #report-popup.active {
+        display: block;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      #report-popup h2 {
+        margin-top: 0;
+        font-size: 1.3em;
+        color: #fff;
+        text-align: center;
+      }
+
+      .report-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 14px;
+        max-height: 240px;
+        overflow-y: auto;
+      }
+
+      .report-option {
+        background: #292929;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        font-size: 0.95em;
+      }
+
+      .report-option:hover {
+        background: #00ffcc22;
+      }
+
+      .report-option.selected {
+        background: #00ffcc55;
+        color: #121212;
+        font-weight: bold;
+      }
+
+      .popup-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 18px;
+        gap: 12px;
+      }
+
+      .popup-actions button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-family: "Orbitron", sans-serif;
+      }
+
+      .popup-actions .cancel-btn {
+        background: #333;
+        color: #ccc;
+      }
+
+      .popup-actions .submit-btn {
+        background: #00ffcc;
+        color: #121212;
+      }
+
+      #close-report {
+        position: absolute;
+        top: 10px;
+        right: 14px;
+        font-size: 1.2em;
+        color: #aaa;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+
+      #close-report:hover {
+        color: #fff;
+      }
+      #feedback-toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #00ffcc;
+        color: #121212;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 0.9em;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(20px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        z-index: 999;
+      }
+
+      #feedback-toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      #history-sidebar {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 300px;
+  height: 100%;
+  background-color: #202020;
+  border-left: 1px solid #00ffcc33;
+  box-shadow: -2px 0 8px rgba(0, 255, 204, 0.2);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s ease-in-out;
+}
+
+#history-sidebar.open {
+  right: 0;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #292929;
+  color: #00ffcc;
+  padding: 14px;
+  font-weight: bold;
+  font-size: 1.1em;
+  border-bottom: 1px solid #00ffcc33;
+}
+
+#history-options-btn {
+  background: none;
+  border: none;
+  font-size: 1.3em;
+  color: #00ffcc;
+  cursor: pointer;
+}
+
+#history-options-popup {
+  display: none;
+  position: absolute;
+  top: 52px;
+  right: 24px;
+  background-color: #2c2c2c;
+  border: 1px solid #00ffcc55;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+  z-index: 20;
+  flex-direction: column;
+}
+
+#history-options-popup button {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  color: #00ffcc;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  font-size: 0.9em;
+}
+
+#history-options-popup button:hover {
+  background: #00ffcc22;
+}
+
+#history-entries {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.history-entry {
+  background: #292929;
+  border: 1px solid #00ffcc33;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 12px;
+  color: #e0e0e0;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+
+      .history-entry:hover {
+        background: #00ffcc22;
+      }
+
+      @keyframes typingIn {
+        0% {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message.user,
+      .message.bot {
+        animation: typingIn 0.4s ease both;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="character-info">
+        <img id="char-img" src="" alt="Character" />
+        <div class="character-meta">
+          <span id="char-name">Character</span>
+          <span id="creator">by Creator</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="sound-toggle">🔊</button>
+        <button id="sidebar-toggle">⋯</button>
+      </div>
+    </header>
+
+    <div id="sidebar">
+      <div class="sidebar-top">
+        <img
+          id="sidebar-img"
+          src="https://via.placeholder.com/100"
+          alt="Character"
+        />
+        <div class="meta">
+          <div class="name" id="sidebar-char-name">Character</div>
+          <div class="username" id="sidebar-username">@username</div>
+        </div>
+      </div>
+      <div class="sidebar-actions" style="display: flex; justify-content: space-between;">
+        <div style="display: flex; gap: 10px;">
+          <button title="Export">📤</button>
+          <button title="Like">👍</button>
+          <button title="Dislike">👎</button>
+        </div>
+        <div>
+          <button title="Report">⚠️</button>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-links">
+        <button id="new-chat"><i class="fas fa-comments"></i> New Chat</button>
+        <button>🎤 Voice</button>
+        <button onclick="showChatHistory()">🕓 History</button>
+        <button id="customize-btn">🛠️ Customize</button>
+        <button id="theme-trigger">🎨 Themes</button>
+      </div>
+    </div>
+    <div id="history-sidebar">
+  <div class="history-header">
+    <span>🕓 History</span>
+    <button id="history-options-btn">⋯</button>
+    <div id="history-options-popup">
+      <button id="delete-all-history">🗑 Delete All Chat</button>
+      <button id="export-history">📤 Export Chat</button>
+    </div>
+  </div>
+  <div id="history-entries"></div>
+</div>
+
+    <div id="chat-box">
+      <div id="chat-container"></div>
+    </div>
+
+    <form id="chat-form">
+      <div class="input-wrapper">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Say something..."
+          autocomplete="off"
+          required
+        />
+        <button type="submit" id="send-btn">📤</button>
+      </div>
+    </form>
+
+    <div id="disclaimer">
+      This is a fictional AI character for roleplay. Replies are not real or
+      factual — just for fun.
+    </div>
+
+    <div id="theme-overlay"></div>
+    <div id="theme-popup">
+      <h2>Choose a Theme</h2>
+      <div class="theme-options">
+        <button class="theme-btn" onclick="location.href='roleplay1.html'">
+          🌑 Dark
+        </button>
+        <button class="theme-btn" onclick="location.href='roleplay2.html'">
+          💖 Romantic
+        </button>
+        <button class="theme-btn" onclick="location.href='roleplay3.html'">
+          😢 Emotional
+        </button>
+        <button class="theme-btn" onclick="location.href='roleplay4.html'">
+          🎉 Fun
+        </button>
+        <button class="theme-btn" onclick="location.href='roleplay6.html'">
+          🌸 Soft Pastel
+        </button>
+        <button class="theme-btn" onclick="location.href='roleplay.html'">
+          🚀 Futuristic
+        </button>
+        <button class="theme-btn" onclick="location.href='roleplay7.html'">
+          🧙 Fantasy
+        </button>
+        <button class="theme-btn" onclick="location.href='roleplay8.html'">
+          🎮 Retro
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const characterKey = localStorage.getItem("roleplayCharacter");
+      const characters = JSON.parse(localStorage.getItem("characters")) || [];
+      const profile = JSON.parse(localStorage.getItem("userProfile")) || {
+        username: "unknown",
+      };
+      const charData = characters.find((c) => c.name === characterKey);
+      const name = profile.displayName || "You";
+      const charName = charData?.name || "AI";
+      const charImg = charData?.image || "https://via.placeholder.com/100";
+      const creator = profile.username || "unknown";
+
+      document.getElementById("char-name").textContent = charName;
+      document.getElementById("char-img").src = charImg;
+      document.getElementById("creator").textContent = `by ${creator}`;
+      document.getElementById("sidebar-char-name").textContent = charName;
+      document.getElementById("sidebar-img").src = charImg;
+      document.getElementById("sidebar-username").textContent = `@${creator}`;
+
+      const chatContainer = document.getElementById("chat-container");
+      const form = document.getElementById("chat-form");
+      const input = document.getElementById("user-input");
+
+      let lastReactionBox;
+
+      function createMessage(text, sender, skipSave = false) {
+        const isBot = sender === "bot";
+
+        const msg = document.createElement("div");
+        msg.className = `message ${sender}`;
+        chatContainer.appendChild(msg);
+
+        let index = 0;
+        const typingSpeed = 20;
+
+        function typeChar() {
+          if (index < text.length) {
+            msg.textContent += text.charAt(index);
+            index++;
+            setTimeout(typeChar, typingSpeed);
+          }
+        }
+
+        typeChar();
+
+        if (!skipSave) saveMessageToChat(text, sender);
+
+        if (lastReactionBox) lastReactionBox.remove();
+
+        if (sender === "bot") {
+          const box = document.createElement("div");
+          box.className = "reaction-buttons";
+          box.innerHTML = `
+            <button id="like">👍</button>
+            <button id="dislike">👎</button>
+            <button id="speak">🔊</button>
+          `;
+          chatContainer.appendChild(box);
+          lastReactionBox = box;
+
+          const likeBtn = box.querySelector("#like");
+          const dislikeBtn = box.querySelector("#dislike");
+
+          likeBtn.onclick = () => {
+            likeBtn.classList.toggle("active");
+            if (likeBtn.classList.contains("active")) {
+              dislikeBtn.classList.remove("active");
+              showToast();
+            }
+          };
+
+          dislikeBtn.onclick = () => {
+            dislikeBtn.classList.toggle("active");
+            if (dislikeBtn.classList.contains("active")) {
+              likeBtn.classList.remove("active");
+              showToast();
+            }
+          };
+        }
+
+        setTimeout(() => {
+          const chatBox = document.getElementById("chat-box");
+          chatBox.scrollTop = chatBox.scrollHeight - 100;
+        }, 100);
+      }
+
+      form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const userText = input.value.trim();
+  if (!userText) return;
+
+  createMessage(userText, "user");
+  input.value = "";
+
+  setTimeout(() => {
+    const botReply = `I like that "${userText}", tell me more...`;
+    createMessage(botReply, "bot");
+  }, 600);
+});
+
+      document.getElementById("sound-toggle").onclick = () => {
+        const btn = document.getElementById("sound-toggle");
+        const isMuted = btn.textContent === "🔇";
+        btn.textContent = isMuted ? "🔊" : "🔇";
+      };
+
+      const sidebar = document.getElementById("sidebar");
+      const toggleBtn = document.getElementById("sidebar-toggle");
+      toggleBtn.onclick = () => sidebar.classList.toggle("open");
+
+      document.addEventListener("click", (e) => {
+        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+          sidebar.classList.remove("open");
+        }
+      });
+
+      const themeBtn = document.getElementById("theme-trigger");
+      const themePopup = document.getElementById("theme-popup");
+      const themeOverlay = document.getElementById("theme-overlay");
+
+      themeBtn.addEventListener("click", () => {
+        themePopup.classList.add("active");
+        themeOverlay.style.display = "block";
+      });
+
+      themeOverlay.addEventListener("click", () => {
+        themePopup.classList.remove("active");
+        themeOverlay.style.display = "none";
+      });
+
+      // (placeholder for createMessage, replaced above)
+
+let allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+const currentCharacter = localStorage.getItem("roleplayCharacter");
+let currentChatId;
+
+      function saveMessageToChat(text, sender) {
+        const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+        if (!allChats[currentChatId]) {
+          allChats[currentChatId] = {
+            id: currentChatId,
+            character: characterKey,
+            name: charName,
+            creator: creator,
+            image: charImg,
+            messages: [],
+            lastUpdated: new Date().toISOString(),
+          };
+        }
+
+        allChats[currentChatId].messages.push({
+          text,
+          sender,
+          timestamp: Date.now(),
+        });
+        allChats[currentChatId].lastUpdated = new Date().toISOString();
+
+        localStorage.setItem("chatSessions", JSON.stringify(allChats));
+      }
+
+      function showChatHistory() {
+        const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+        const currentCharacter = localStorage.getItem("roleplayCharacter");
+
+        const chatsForChar = Object.values(allChats).filter(
+          (chat) => chat.character === currentCharacter
+        );
+
+        if (!chatsForChar.length) {
+          alert("No chat history available for this character.");
+          return;
+        }
+
+        const historyList = chatsForChar
+          .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))
+          .map(
+            (chat) =>
+              `🕓 ${new Date(chat.lastUpdated).toLocaleString()} — ${
+                chat.messages.length
+              } msgs`
+          )
+          .join("\n\n");
+
+        alert(`History:\n\n${historyList}`);
+      }
+    </script>
+
+    <!-- REPORT POPUP OVERLAY -->
+    <div id="report-overlay"></div>
+    <div id="report-popup">
+      <button id="close-report">✖</button>
+      <h2>Report Character</h2>
+      <div class="report-options" id="report-options">
+        <div class="report-option">Threats & Harassment</div>
+        <div class="report-option">NSFW</div>
+        <div class="report-option">Hate Speech</div>
+        <div class="report-option">Sexual Harassment</div>
+        <div class="report-option">Violence or Gore</div>
+        <div class="report-option">Self-Harm Promotion</div>
+        <div class="report-option">Misinformation</div>
+        <div class="report-option">Spam or Scams</div>
+        <div class="report-option">Illegal Activities</div>
+        <div class="report-option">Impersonation</div>
+        <div class="report-option">Graphic Content</div>
+        <div class="report-option">Copyright Violation</div>
+        <div class="report-option">Religious Offense</div>
+        <div class="report-option">Political Extremism</div>
+        <div class="report-option">Other</div>
+      </div>
+      <div class="popup-actions">
+        <button class="cancel-btn" id="cancel-report">Cancel</button>
+        <button class="submit-btn" id="submit-report">Submit</button>
+      </div>
+    </div>
+    <div id="feedback-toast">Thanks for your feedback!</div>
+    <script>
+      // === REPORT FUNCTIONALITY ===
+      const reportBtn = document.querySelector(
+        '.sidebar-actions button[title="Report"]'
+      );
+      const reportOverlay = document.getElementById("report-overlay");
+      const reportPopup = document.getElementById("report-popup");
+      const closeReportBtn = document.getElementById("close-report");
+      const cancelReportBtn = document.getElementById("cancel-report");
+      const submitReportBtn = document.getElementById("submit-report");
+      const reportOptions = document.getElementById("report-options").children;
+
+      let selectedOption = null;
+
+      // Show popup
+      reportBtn.onclick = () => {
+        reportPopup.classList.add("active");
+        reportOverlay.style.display = "block";
+      };
+
+      // Close popup
+      const closeReportPopup = () => {
+        reportPopup.classList.remove("active");
+        reportOverlay.style.display = "none";
+        if (selectedOption) selectedOption.classList.remove("selected");
+        selectedOption = null;
+      };
+
+      closeReportBtn.onclick = closeReportPopup;
+      cancelReportBtn.onclick = closeReportPopup;
+      reportOverlay.onclick = closeReportPopup;
+
+      // Select report option (single selection)
+      for (let option of reportOptions) {
+        option.onclick = () => {
+          if (selectedOption) selectedOption.classList.remove("selected");
+          option.classList.add("selected");
+          selectedOption = option;
+        };
+      }
+
+      // Submit button (we'll add logic later)
+      submitReportBtn.onclick = () => {
+        if (selectedOption) {
+          alert(`Report submitted for: "${selectedOption.textContent}"`);
+          closeReportPopup();
+        } else {
+          alert("Please select a reason before submitting.");
+        }
+      };
+      function showToast() {
+        const toast = document.getElementById("feedback-toast");
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 5000);
+      }
+      document
+        .querySelectorAll(
+          '.sidebar-actions button[title="Like"], .sidebar-actions button[title="Dislike"]'
+        )
+        .forEach((btn) => {
+          btn.addEventListener("click", showToast);
+        });
+
+      // Handle Customize button
+      document.getElementById("customize-btn").addEventListener("click", () => {
+        const characterKey = localStorage.getItem("roleplayCharacter");
+        if (characterKey) {
+          window.location.href = `create-character.html?from=roleplay.html&name=${encodeURIComponent(
+            characterKey
+          )}`;
+        } else {
+          alert(
+            "No character selected to customize. Please choose a character first."
+          );
+        }
+      });
+
+      document.getElementById("new-chat").addEventListener("click", () => {
+  const newId = Date.now().toString();
+  const characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
+characterChatMap[characterKey] = newId;
+localStorage.setItem("characterChatMap", JSON.stringify(characterChatMap));
+
+  const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+  allChats[newId] = {
+    id: newId,
+    character: characterKey,
+    name: charName,
+    creator: creator,
+    image: charImg,
+    messages: [],
+    lastUpdated: new Date().toISOString(),
+  };
+
+  localStorage.setItem("chatSessions", JSON.stringify(allChats));
+  location.reload();
+});
+      const historyBtn = document.querySelector('.sidebar-links button:nth-child(3)');
+const historySidebar = document.getElementById("history-sidebar");
+const historyEntriesContainer = document.getElementById("history-entries");
+const historyOptionsBtn = document.getElementById("history-options-btn");
+const historyOptionsPopup = document.getElementById("history-options-popup");
+const deleteAllBtn = document.getElementById("delete-all-history");
+const exportBtn = document.getElementById("export-history");
+const sidebarExportBtn = document.querySelector('.sidebar-actions button[title="Export"]');
+
+historyBtn.onclick = () => {
+  renderChatHistory();
+  historySidebar.classList.add("open");
+};
+
+document.addEventListener("click", (e) => {
+  if (!historySidebar.contains(e.target) && !historyBtn.contains(e.target)) {
+    historySidebar.classList.remove("open");
+  }
+  if (!historyOptionsPopup.contains(e.target) && e.target !== historyOptionsBtn) {
+    historyOptionsPopup.style.display = "none";
+  }
+});
+
+historyOptionsBtn.onclick = () => {
+  historyOptionsPopup.style.display =
+    historyOptionsPopup.style.display === "flex" ? "none" : "flex";
+  historyOptionsPopup.style.flexDirection = "column";
+};
+
+deleteAllBtn.onclick = () => {
+  if (confirm("Are you sure you want to delete all chat history?")) {
+    const all = JSON.parse(localStorage.getItem("chatSessions")) || {};
+    const updated = {};
+    Object.keys(all).forEach((id) => {
+      if (all[id].character !== characterKey) updated[id] = all[id];
+    });
+    localStorage.setItem("chatSessions", JSON.stringify(updated));
+    renderChatHistory();
+  }
+};
+
+exportBtn.onclick = () => {
+  const all = JSON.parse(localStorage.getItem("chatSessions")) || {};
+  const currentCharacter = localStorage.getItem("roleplayCharacter");
+  const characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
+  const currentChatId = characterChatMap[currentCharacter];
+  const chat = all[currentChatId];
+
+  if (!chat) {
+    alert("No current chat available to export.");
+    return;
+  }
+
+  const chatText = chat.messages
+    .map((m) => `${m.sender === "user" ? "You" : charName}: ${m.text}`)
+    .join("\n");
+
+  const blob = new Blob([chatText], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${charName}-chat.txt`;
+  a.click();
+};
+
+sidebarExportBtn.onclick = () => {
+  const all = JSON.parse(localStorage.getItem("chatSessions")) || {};
+  const currentCharacter = localStorage.getItem("roleplayCharacter");
+  const characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
+  const currentChatId = characterChatMap[currentCharacter];
+  const chat = all[currentChatId];
+
+  if (!chat) {
+    alert("No current chat available to export.");
+    return;
+  }
+
+  const chatText = chat.messages
+    .map((m) => `${m.sender === "user" ? "You" : charName}: ${m.text}`)
+    .join("\n");
+
+  const blob = new Blob([chatText], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${charName}-chat.txt`;
+  a.click();
+};
+
+function renderChatHistory() {
+  const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+  const entries = Object.values(allChats)
+    .filter(c => c.character === characterKey)
+    .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+
+  historyEntriesContainer.innerHTML = "";
+  if (!entries.length) {
+    historyEntriesContainer.innerHTML = "<p style='color:#888;'>No chats yet.</p>";
+    return;
+  }
+
+  entries.forEach(entry => {
+    const lastMsg = entry.messages[entry.messages.length - 1]?.text || "(No messages)";
+    const date = new Date(entry.lastUpdated);
+    const box = document.createElement("div");
+    box.className = "history-entry";
+    box.innerHTML = `<strong>Created:</strong> ${date.toLocaleTimeString()}<br>${lastMsg}`;
+    box.onclick = () => {
+  const characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
+characterChatMap[characterKey] = entry.id;
+localStorage.setItem("characterChatMap", JSON.stringify(characterChatMap));
+  location.reload(); // Fully reloads the page and loads that chat
+};
+    historyEntriesContainer.appendChild(box);
+  });
+}
+window.addEventListener("DOMContentLoaded", () => {
+  const characterChatMap = JSON.parse(localStorage.getItem("characterChatMap")) || {};
+currentChatId = characterChatMap[characterKey];
+
+if (!currentChatId) {
+  currentChatId = Date.now().toString();
+  characterChatMap[characterKey] = currentChatId;
+  localStorage.setItem("characterChatMap", JSON.stringify(characterChatMap));
+}
+  const allChats = JSON.parse(localStorage.getItem("chatSessions")) || {};
+  let chat = allChats[currentChatId];
+
+  if (!chat) {
+    chat = {
+      id: currentChatId,
+      character: characterKey,
+      name: charName,
+      creator: creator,
+      image: charImg,
+      messages: [],
+      lastUpdated: new Date().toISOString(),
+    };
+    allChats[currentChatId] = chat;
+    localStorage.setItem("chatSessions", JSON.stringify(allChats));
+  }
+
+  // Show saved messages
+  if (chat.messages.length > 0) {
+    chat.messages.forEach((m) => createMessage(m.text, m.sender, true));
+  } else {
+    const welcomeMsg = `Hello, I'm ${charName}. What would you like to chat about today?`;
+    createMessage(welcomeMsg, "bot");
+  }
+});
+    </script>
+  </body>
+</html>
