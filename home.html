@@ -685,8 +685,8 @@
             <i class="fas fa-angle-left"></i>
           </button>
         </h2>
-        <a href="profile.html" class="control-link">🧑‍🚀 Profile</a>
-        <a href="#" class="control-link">📜 The Codex</a>
+        <a href="profile.html" class="control-link"><i class="fas fa-user-astronaut icon-animate"></i> Profile</a>
+        <a href="#" class="control-link"><i class="fas fa-scroll icon-animate"></i> The Codex</a>
         <a href="characters.html" class="control-link"
           ><i class="fas fa-masks-theater"></i> Characters</a
         >
@@ -932,9 +932,9 @@
           <p>"${c.tagline}"</p>
           <button class="menu-icon" onclick="toggleMenu(event, ${i})">\u22EF</button>
           <div class="action-menu" id="menu-${i}">
-            <button onclick="editCharacter(${i})">✏️ Character</button>
-            <button onclick="confirmDelete(${i})">🗑️ Delete</button>
-            <button onclick="removeCard(this)">❌ Remove</button>
+            <button onclick="editCharacter(${i})"><i class="fas fa-edit icon-animate"></i> Character</button>
+            <button onclick="confirmDelete(${i})"><i class="fas fa-trash icon-animate"></i> Delete</button>
+                          <button onclick="removeCard(this)"><i class="fas fa-times icon-animate"></i> Remove</button>
           </div>
         `;
 
